@@ -7,7 +7,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: "web-builder-cms",
+    title: "ecommerce-wine-sale",
     htmlAttrs: {
       lang: "en",
     },

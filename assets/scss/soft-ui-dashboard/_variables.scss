@@ -54,7 +54,7 @@ $colors: (
 // scss-docs-end colors-map
 
 // $primary: #cb0c9f !default;
-$primary: #b50a46 !default;
+$primary: #7a000e !default;
 $secondary: #8392ab !default;
 $info: #17c1e8 !default;
 $success: #82d616 !default;
@@ -81,8 +81,8 @@ $theme-colors: (
 // $primary-gradient: #7928ca !default;
 // $primary-gradient-state: #ff0080 !default;
 
-$primary-gradient: #b50a46 !default;
-$primary-gradient-state: #ff5a8d !default;
+$primary-gradient: #7a000e !default;
+$primary-gradient-state: #b50a46 !default;
 
 $secondary-gradient: #627594 !default;
 $secondary-gradient-state: #a8b8d8 !default;
@@ -144,8 +144,6 @@ $theme-gradient-colors: (
 // Set a specific jump point for requesting color jumps
 $theme-color-interval: 8% !default;
 
-// The contrast ratio to reach against white, to determine if color changes from "light" to "dark". Acceptable values for WCAG 2.0 are 3, 4.5 and 7.
-// See https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast
 $min-contrast-ratio: 4.5 !default;
 
 // Customize the light and dark text colors for use in our color contrast function.
@@ -589,7 +587,7 @@ $text-gradient-bg-clip: text !default;
 $text-gradient-text-fill: transparent !default;
 $text-gradient-position: relative !default;
 $text-gradient-zindex: 1 !default;
-$text-gradient-bg-primary: linear-gradient(310deg, #7928ca, #ff0080) !default;
+$text-gradient-bg-primary: linear-gradient(310deg, #b50a46, #b50a46) !default;
 $text-gradient-bg-info: linear-gradient(310deg, #2152ff, #21d4fd) !default;
 $text-gradient-bg-success: linear-gradient(310deg, #17ad37, #c1e823) !default;
 $text-gradient-bg-warning: linear-gradient(310deg, #f53939, #fbcf33) !default;
@@ -1080,12 +1078,6 @@ $form-validation-states: (
     "icon": $form-feedback-icon-invalid,
   ),
 ) !default;
-// scss-docs-end form-validation-states
-
-// Z-index master list
-//
-// Warning: Avoid customizing these values. They're used for a bird's eye view
-// of components dependent on the z-axis and are designed to all work together.
 
 // scss-docs-start zindex-stack
 $zindex-dropdown: 1000 !default;

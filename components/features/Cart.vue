@@ -1,13 +1,18 @@
 <template>
-  <div>
-    <nuxt />
-  </div>
+  <div></div>
 </template>
 
 <script>
 export default {
+  props: {
+
+  },
   data() {
-    return {}
+    return {
+
+    }
+  },
+  created() {
   }
 }
 </script>
