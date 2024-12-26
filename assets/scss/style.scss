@@ -1,0 +1,32 @@
+// Bootstrap Functions
+@import "soft-ui-dashboard/bootstrap/functions";
+
+// Custom Variables
+@import "soft-ui-dashboard/custom/variables";
+
+// Theme Variables
+@import "soft-ui-dashboard/variables";
+
+// Bootstrap Core
+@import "soft-ui-dashboard/bootstrap/bootstrap";
+
+// Theme Core
+@import "soft-ui-dashboard/theme";
+
+// Custom Variables
+@import "soft-ui-dashboard/custom/styles";
+
+body {
+  font-family: Roboto, sans-serif;
+}
+
+.el-table th.el-table__cell>.cell {
+  display: inline-block;
+  box-sizing: border-box;
+  position: relative;
+  vertical-align: middle;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 100%;
+  word-break: break-word;
+}
