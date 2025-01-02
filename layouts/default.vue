@@ -2,7 +2,7 @@
   <div class="page-wrapper">
     <ew-header></ew-header>
     <ew-navbar></ew-navbar>
-    <div style="flex: 1">
+    <div style="min-height: calc(100vh - 242px)">
       <nuxt />
     </div>
     <ew-footer></ew-footer>
@@ -22,7 +22,9 @@ export default {
 <style lang="scss" scoped>
 .page-wrapper {
   min-height: 100vh;
-   display: flex;
+  max-height: 100vh;
+  overflow-y: auto;
+  display: flex;
   flex-direction: column;
 }
 </style>
