@@ -7,7 +7,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: "ecommerce-wine-sale",
+    title: "Góc rượu vang",
     htmlAttrs: {
       lang: "en",
     },
@@ -18,6 +18,11 @@ export default {
       { name: "format-detection", content: "telephone=no" },
     ],
     link: [
+      {
+        rel: "icon",
+        type: "image/x-icon",
+        href: "/logo.png",
+      },
       {
         rel: "stylesheet",
         href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css",
@@ -51,6 +56,7 @@ export default {
     { src: "~/plugins/axios.js", ssr: false },
     { src: "~/plugins/quilleditor.js", ssr: false },
     { src: "~/plugins/element-ui.js", ssr: false },
+    { src: "~/plugins/vue-awesome-swiper.js", ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -1,15 +1,36 @@
 <template>
   <div>
-    <button class="btn bg-gradient-primary">Hay 12</button>
+    <swiper :options="swiperOptions">
+      <swiper-slide>
+        <div style="height: 500px" class="bg-gradient-success"></div>
+      </swiper-slide>
+      <swiper-slide>Slide 2</swiper-slide>
+      <swiper-slide>Slide 3</swiper-slide>
+      <!-- Add more slides as needed -->
+      <div class="swiper-pagination" slot="pagination"></div>
+    </swiper>
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {}
-  }
-}
+    return {
+      swiperOptions: {
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        loop: true,
+        autoplay: {
+          delay: 3000,
+        },
+      },
+    };
+  },
+};
 </script>
 
-<style lang="scss" scoped></style>
+<style>
+/* Bạn có thể tùy chỉnh thêm nếu cần */
+</style>

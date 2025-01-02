@@ -17,7 +17,7 @@
 @import "soft-ui-dashboard/custom/styles";
 
 body {
-  font-family: Roboto, sans-serif;
+  font-family: Inter, sans-serif;
 }
 
 .el-table th.el-table__cell>.cell {
@@ -29,4 +29,25 @@ body {
   padding-right: 10px;
   width: 100%;
   word-break: break-word;
+}
+
+.el-input__inner {
+  -webkit-appearance: none;
+  background-color: #FFF;
+  background-image: none;
+  border-radius: 4px;
+  border: 1px solid #DCDFE6;
+  box-sizing: border-box;
+  color: #606266;
+  display: inline-block;
+  height: 36px !important;
+  line-height: 36px !important;
+  outline: 0;
+  padding: 0 15px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+  width: 100%;
+}
+
+.el-form-item {
+  margin-bottom: 6px !important;
 }
