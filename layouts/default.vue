@@ -2,7 +2,7 @@
   <div class="page-wrapper">
     <ew-header></ew-header>
     <ew-navbar></ew-navbar>
-    <div style="min-height: calc(100vh - 242px)">
+    <div>
       <nuxt />
     </div>
     <ew-footer></ew-footer>
