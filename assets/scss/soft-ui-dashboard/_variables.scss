@@ -1268,7 +1268,7 @@ $card-spacer-y: $spacer !default;
 $card-spacer-x: $spacer !default;
 $card-title-spacer-y: calc($spacer / 2) !default;
 $card-border-width: 0 !default;
-$card-border-radius: 1rem !default;
+$card-border-radius: 8px !default;
 $card-border-color: rgba($black, 0.125) !default;
 $card-inner-border-radius: subtract(
   $card-border-radius,

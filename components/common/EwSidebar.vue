@@ -9,7 +9,12 @@
 
     <div class="list-tab">
       <div v-for="tab in getListTab" :key="tab.id" class="w-100">
-        <nuxt-link v-if="tab.children.length === 0" :to="tab.path" class="nav-link-sidebar" exact-active-class="activate-sidebar">
+        <nuxt-link
+          v-if="tab.children.length === 0"
+          :to="tab.path"
+          class="nav-link-sidebar"
+          exact-active-class="activate-sidebar"
+        >
           <div class="bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center">
             <i class="text-sm opacity-10 ni ni-folder-17 text-secondary" aria-hidden="true"></i>
           </div>
@@ -24,9 +29,7 @@
             aria-expanded="false"
             aria-label="Toggle listStudent"
           >
-            <div
-              class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center"
-            >
+            <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center">
               <i class="text-sm opacity-10 ni ni-folder-17 text-secondary" aria-hidden="true"></i>
             </div>
             <span class="nav-link-text">{{ tab.name }}</span>
@@ -38,12 +41,12 @@
                   class="nav-link-sidebar d-flex align-items-center"
                   aria-current="page"
                   :to="item.path"
-                  active-class="active"
+                  exact-active-class="activate-sidebar"
                 >
                   <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center">
                     <i class="text-sm opacity-10 ni ni-bag-17 text-secondary" aria-hidden="true"></i>
                   </div>
-                  <span class="nav-link-text ms-2">Học viên trước nhập học</span>
+                  <span class="nav-link-text ms-2">{{ item.name }}</span>
                 </NuxtLink>
               </li>
             </ul>

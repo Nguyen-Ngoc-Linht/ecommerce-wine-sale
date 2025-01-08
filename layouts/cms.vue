@@ -27,5 +27,13 @@ export default {
   width: 100%;
   height: 100vh;
   display: flex;
+
+  .body-cms {
+    flex: 1;
+    min-height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    background-color: #EEEEF0;
+  }
 }
 </style>
