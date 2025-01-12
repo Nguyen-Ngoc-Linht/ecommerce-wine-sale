@@ -57,27 +57,31 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .elc-pagination {
   padding: 2px 10px;
+
   .el-pagination__total {
     font-size: 12px;
   }
+
   .el-input__wrapper {
     border: 1px solid #ebebec;
     border-radius: 4px;
     font-size: 12px;
   }
 }
+
 .btn-prev {
   background: none !important;
 }
+
 .btn-next {
   background: none !important;
 }
+
 .el-pager li {
   background: none !important;
   padding-top: 4px;
 }
 </style>
-

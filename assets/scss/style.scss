@@ -30,6 +30,15 @@ body {
   padding-right: 10px;
   width: 100%;
   word-break: break-word;
+  color: #C61654 !important;
+}
+
+.el-table th.el-table__cell {
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  background-color: #F9EAF0 !important;
 }
 
 .el-input__inner {
@@ -51,4 +60,51 @@ body {
 
 .el-form-item {
   margin-bottom: 6px !important;
+}
+
+.el-pager li.active,
+.el-pager li:hover {
+  color: white !important;
+  background-color: #C61654 !important;
+  cursor: default;
+}
+
+.el-pager {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  list-style: none;
+  font-size: 0;
+  margin: 0 6px !important;
+}
+
+.el-pager li {
+  padding: 0 4px;
+  margin: 0 2px !important;
+  color: #5C606D !important;
+  background: transparent !important;
+  border-radius: 4px !important;
+  font-size: 13px;
+  min-width: 35.5px;
+  height: 28px;
+  line-height: 28px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.el-pagination .el-select .el-input .el-input__inner {
+  padding-right: 25px;
+  border-radius: 3px;
+  height: 30px !important;
+}
+
+.el-pagination__editor.el-input .el-input__inner {
+  height: 30px !important;
+}
+
+.el-dialog__body {
+  padding: 10px 20px !important;
+  color: #606266;
+  font-size: 14px;
+  word-break: break-all;
 }

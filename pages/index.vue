@@ -17,9 +17,57 @@
           <p class="text-white text-sm">Giải pháp quà tặng doanh nghiệp hàng đầu Việt Nam</p>
         </div>
       </div>
-      <div class="mt-4">
+      <div class="mt-2">
+        <div class="d-flex justify-content-between">
+          <h3 class="mb-0 text-black">Chất từ vị vang - Siêu sale bùng nổ</h3>
+          <h3>Kết thúc sau</h3>
+        </div>
         <el-row :gutter="20">
-          <el-col :xl="4"></el-col>
+          <el-col
+            v-for="(product, index) in products"
+            :key="index"
+            :lg="6" :md="8" :sm="12" :span="24"
+            class="mt-3"
+          >
+            <Item :info-item="product"></Item>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="mt-4 pb-4">
+        <h3 class="font-weight-bold text-primary text-center">Loại rượu vang</h3>
+        <el-row class="mt-3" :gutter="12">
+          <el-col :lg="6" :md="8" :sm="12">
+            <div class="w-100 shadow-blur position-relative rounded-3 d-flex align-items-center" style="aspect-ratio: 16 / 9">
+              <div class="banner-image-type rounded-3 overflow-hidden position-absolute w-100 h-100" >
+                <img src="https://winecellar.vn/wp-content/uploads/2023/03/tim-hieu-ve-ruou-vang-y.jpg" alt="" class="w-100 h-100" style="object-fit: cover">
+              </div>
+              <h5 class="text-white w-50 ps-4 mb-0 cursor-pointer" style="z-index: 100">RƯỢU VANG ĐỎ</h5>
+            </div>
+          </el-col>
+          <el-col :lg="6" :md="8" :sm="12">
+            <div class="w-100 position-relative rounded-3 d-flex align-items-center" style="aspect-ratio: 16 / 9">
+              <div class="banner-image-type rounded-3 overflow-hidden position-absolute w-100 h-100" >
+                <img src="https://winecellar.vn/wp-content/uploads/2023/03/tim-hieu-ve-ruou-vang-phap.jpg" alt="" class="w-100 h-100" style="object-fit: cover">
+              </div>
+              <h5 class="text-black w-50 ps-4 mb-0 cursor-pointer" style="z-index: 100">RƯỢU VANG TRẮNG</h5>
+            </div>
+          </el-col>
+          <el-col :lg="6" :md="8" :sm="12">
+            <div class="w-100 position-relative rounded-3 d-flex align-items-center" style="aspect-ratio: 16 / 9">
+              <div class="banner-image-type rounded-3 overflow-hidden position-absolute w-100 h-100" >
+                <img src="https://winecellar.vn/wp-content/uploads/2023/06/cat-ruou-champagne.jpg" alt="" class="w-100 h-100" style="object-fit: cover">
+              </div>
+              <h5 class="text-black w-50 ps-4 mb-0 cursor-pointer" style="z-index: 100">RƯỢU CHAMPAGNE</h5>
+            </div>
+          </el-col>
+          <el-col :lg="6" :md="8" :sm="12">
+            <div class="w-100 position-relative rounded-3 d-flex align-items-center" style="aspect-ratio: 16 / 9">
+              <div class="banner-image-type rounded-3 overflow-hidden position-absolute w-100 h-100" >
+                <img src="https://winecellar.vn/wp-content/uploads/2023/10/Frame-22-1.jpg" alt="" class="w-100 h-100" style="object-fit: cover">
+              </div>
+              <h5 class="text-black w-50 ps-4 mb-0 cursor-pointer" style="z-index: 100">RƯỢU VANG HỒNG</h5>
+            </div>
+          </el-col>
         </el-row>
       </div>
     </div>
@@ -29,8 +77,10 @@
 <script>
 import {mapGetters} from "vuex";
 import {slideBannerHome} from "@/utils/configSwipper";
+import Item from "@/components/features/Item.vue";
 
 export default {
+  components: {Item},
   data() {
     return {
       swiperOptions: slideBannerHome,
@@ -39,6 +89,7 @@ export default {
   },
   computed: {
     ...mapGetters('home', ['getBanner']),
+    ...mapGetters('product', ['products']),
     backgroundStyle() {
       return this.background_image
         ? {

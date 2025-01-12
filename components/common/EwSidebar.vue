@@ -15,7 +15,7 @@
           class="nav-link-sidebar"
           exact-active-class="activate-sidebar"
         >
-          <div class="bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center">
+          <div class="bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center icon-tab">
             <i class="text-sm opacity-10 ni ni-folder-17 text-secondary" aria-hidden="true"></i>
           </div>
           <span class="nav-link-text" :class="false ? ' me-1' : 'ms-1'">{{ tab.name }}</span>
@@ -29,21 +29,21 @@
             aria-expanded="false"
             aria-label="Toggle listStudent"
           >
-            <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center">
+            <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center icon-tab">
               <i class="text-sm opacity-10 ni ni-folder-17 text-secondary" aria-hidden="true"></i>
             </div>
             <span class="nav-link-text">{{ tab.name }}</span>
           </div>
           <div class="collapse py-2" id="listStudent">
             <ul class="navbar-nav mx-auto">
-              <li v-for="item in tab.children" class="">
+              <li v-for="item in tab.children" class="mt-1">
                 <NuxtLink
                   class="nav-link-sidebar d-flex align-items-center"
                   aria-current="page"
                   :to="item.path"
-                  exact-active-class="activate-sidebar"
+                  active-class="activate-sidebar"
                 >
-                  <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center">
+                  <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center icon-tab">
                     <i class="text-sm opacity-10 ni ni-bag-17 text-secondary" aria-hidden="true"></i>
                   </div>
                   <span class="nav-link-text ms-2">{{ item.name }}</span>
@@ -109,10 +109,18 @@ export default {
 
       &.activate-sidebar,
       &:hover {
-        background-color: rgba(153, 13, 35, 0.8);
+        background-color: #F9EAF0;
+
+        .icon-tab {
+          background-color: white;
+
+          i {
+            color: #b50a46 !important;
+          }
+        }
 
         .nav-link-text {
-          color: white;
+          color: #b50a46;
           font-weight: 500;
         }
       }
