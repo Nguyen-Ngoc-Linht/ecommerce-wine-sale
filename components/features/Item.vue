@@ -7,7 +7,7 @@
           <div
             class="d-flex py-2 align-items-center justify-content-center w-100 bg-white gap-2"
           >
-            <div class="tab-action">
+            <div @click="addProductCart" class="tab-action">
               <el-tooltip effect="dark" content="Thêm vào giỏ hàng" placement="top">
                 <img src="~/assets/img/home/ShoppingCartSimple.svg" alt="">
               </el-tooltip>
@@ -47,16 +47,38 @@
 
 <script>
 import BuyNow from "@/components/features/BuyNow.vue";
+import {mapActions} from "vuex";
+import {getSessionCart} from "@/utils/cookieAuthen";
 
 export default {
   components: {BuyNow},
   methods: {
+    ...mapActions('cart', {
+      apiAddProductCartSession: 'apiAddProductCartSession',
+      apiAddProductCart: 'apiAddProductCart',
+    }),
     formatPrice(price) {
       if (typeof price !== 'number') return '';
       return new Intl.NumberFormat('vi-VN').format(price) + ' đ';
     },
     openDialogBuyNow() {
       this.showBuyDialog = true
+    },
+    async addProductCart() {
+      try {
+        const sessionKey = getSessionCart()
+        const params = {
+          cartId : sessionKey,
+          productId : this.infoItem.id,
+          product : this.infoItem,
+          quantity : 1
+        }
+        await this.apiAddProductCartSession(params).then((res) => {
+          this.$notify('success', 'Bạn đã thêm sản phẩm vào giỏ hàng thành công')
+        })
+      } catch (e) {
+        console.log(e)
+      }
     }
   },
   props: {

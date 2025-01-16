@@ -9,5 +9,6 @@ module.exports = {
     FirebaseToken: "ecommerce-Wine-Sales-Firebase-Token",
     LoginType: "ecommerce-Wine-Sales-Login-Type",
     LoginCsrfState: "ecommerce-Wine-Sales-Login-Csrf-State",
+    SessionCart: 'ecommerce-Wine-Sales-Session-Cart',
   },
 };

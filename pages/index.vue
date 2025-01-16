@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import {slideBannerHome} from "@/utils/configSwipper";
 import Item from "@/components/features/Item.vue";
 
@@ -85,11 +85,11 @@ export default {
     return {
       swiperOptions: slideBannerHome,
       background_image: 'https://winecellar.vn/wp-content/uploads/2024/12/bg-main-tet-wcl-3.jpg',
+      products: [],
     };
   },
   computed: {
     ...mapGetters('home', ['getBanner']),
-    ...mapGetters('product', ['products']),
     backgroundStyle() {
       return this.background_image
         ? {
@@ -100,6 +100,29 @@ export default {
         }
         : {};
     },
+  },
+  methods: {
+    ...mapActions('product', {
+      apiGetAllProducts: 'apiGetAllProducts'
+    }),
+    async getProduct() {
+      try {
+        const params = {
+          paged : {
+            page : 1,
+            size : 10
+          }
+        }
+        await this.apiGetAllProducts(params).then((res) => {
+          this.products = res.data.content
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  },
+  created() {
+    this.getProduct()
   }
 };
 </script>

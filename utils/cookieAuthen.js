@@ -10,6 +10,7 @@ const SearchKey = cookiesConfig.AUTHEN.SearchKey;
 const FirebaseToken = cookiesConfig.AUTHEN.FirebaseToken;
 const LoginType = cookiesConfig.AUTHEN.LoginType;
 const LoginCsrfState = cookiesConfig.AUTHEN.LoginCsrfState;
+const SessionCart = cookiesConfig.AUTHEN.SessionCart;
 
 export function getAccessToken() {
   return Cookies.get(AccessToken);
@@ -50,5 +51,23 @@ export function setUserInfo(data) {
 export function removeUserInfo() {
   if (process.browser) {
     localStorage.removeItem(UserInfo);
+  }
+}
+
+export function getSessionCart() {
+  if (process.browser) {
+    return localStorage.getItem(SessionCart);
+  }
+}
+
+export function setSessionCart(data) {
+  if (process.browser) {
+    localStorage.setItem(SessionCart, data);
+  }
+}
+
+export function removeSessionCart() {
+  if (process.browser) {
+    localStorage.removeItem(SessionCart);
   }
 }

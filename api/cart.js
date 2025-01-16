@@ -1,13 +1,13 @@
-export const API_VIDEO = {
-  apiVideo: 'esports/videos',
-  apiVideoGame: 'esports/videos/game',
-  apiChannel: 'esports/videos/channel',
-  apiShortChannel: '/esports/videos/shorts',
-  apiVideoTop: 'esports/videos/top',
-  apiVideoShort: 'esports/videos/shorts',
-  apiVideoShortDetail: 'esports/videos/shorts/detail',
-  // Video-metrics
-  apiVideoIsLiked: 'esports/videos/is-liked',
-  apiVideoChangeLike: 'esports/videos/auth-like',
-  apiVideoSearch: 'esports/videos/search',
+const base_service = 'wine-service/api/v1.0'
+
+export const API_CART = {
+  apiCartSession: `${base_service}/cart-session`,
+  apiCartSessionGenerate: `${base_service}/cart-session/generate`,
+  apiCartSessionAdd: `${base_service}/cart-session/add`,
+  apiCartSessionRemove: `${base_service}/cart-session/remove`,
+
+  apiCart: `${base_service}/carts`,
+  apiCartAdd: `${base_service}/carts/add`,
+  apiCartRemove: `${base_service}/carts/remove`,
+  apiCartUser: `${base_service}/carts/users`,
 };
