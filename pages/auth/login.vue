@@ -12,12 +12,16 @@
             <el-input v-model="infoLogin.password" type="password"></el-input>
           </el-form-item>
         </el-form>
+
+        <button @click="handleLogin" class="btn bg-gradient-success">Đăng nhập</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {mapActions} from "vuex";
+
 export default {
   layout: 'empty',
   name: "Login",
@@ -27,6 +31,23 @@ export default {
         username: '',
         password: '',
       },
+    }
+  },
+  methods: {
+    ...mapActions('auth', {
+      apiSignIn: 'apiSignIn',
+    }),
+    async handleLogin() {
+      try {
+        const params = {
+          email: this.infoLogin.username,
+          password: this.infoLogin.password,
+        }
+        await this.apiSignIn(params).then(res => {
+          console.log(res)
+          this.$router.push('/cms')
+        })
+      } catch (e) {}
     }
   },
   created() {

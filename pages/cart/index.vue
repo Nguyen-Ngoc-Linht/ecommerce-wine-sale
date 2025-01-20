@@ -12,7 +12,7 @@
               <h6>Sản phẩm</h6>
               <div class="d-flex flex-column mt-3">
                 <div v-for="(product, index) in products" :key="product.id">
-                  <CartProduct :info-card="product">
+                  <CartProduct :info-card="product.product">
                     <template #checkbox>
                       <div class="h-100 d-flex align-items-center me-3">
                         <el-checkbox v-model="product.checkBuy" @change="handleChangeProduct(index)"></el-checkbox>
@@ -96,7 +96,8 @@ export default {
     async getListProduct() {
       try {
         await this.apiGetCartSessionKey().then((res) => {
-          console.log(res, 'products')
+          console.log(res.cartItems)
+          this.products = res.cartItems
         })
       } catch (e) {
         console.log(e)

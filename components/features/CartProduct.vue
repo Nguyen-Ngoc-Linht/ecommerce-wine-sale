@@ -8,7 +8,7 @@
       <div class="title-product">
         <h6 class="mb-0">{{ infoCard.name }}</h6>
         <span class="bg-gradient bg-light px-2 py-1 rounded-2 text-black font-weight-bold text-sm">
-            {{ infoCard.category.name}}
+            {{ infoCard.category?.name}}
         </span>
       </div>
       <h5 class="text-danger">{{ formatPrice(infoCard.price) }}</h5>

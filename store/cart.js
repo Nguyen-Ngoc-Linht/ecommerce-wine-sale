@@ -21,8 +21,8 @@ const actions = {
       const sessionKey = getSessionCart()
       let { data } = await this.$axios.get(`${API_CART.apiCartSession}/${sessionKey}`);
 
-      if (data.status === 200) {
-        return data
+      if (data.code === 200) {
+        return data.data
       }
     } catch (e) {
       console.log(e)
@@ -32,7 +32,7 @@ const actions = {
     try {
       let { data } = await this.$axios.post(`${API_CART.apiCartSessionAdd}`, payload)
 
-      if (data.status === 200) {
+      if (data.code === 201) {
         return data
       }
     } catch (e) {
