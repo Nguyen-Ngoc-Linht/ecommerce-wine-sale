@@ -38,7 +38,7 @@
             <ul class="navbar-nav mx-auto">
               <li v-for="item in tab.children" class="mt-1">
                 <NuxtLink
-                  class="nav-link-sidebar d-flex align-items-center"
+                  class="nav-link-sidebar d-flex align-items-center ps-3"
                   aria-current="page"
                   :to="item.path"
                   active-class="activate-sidebar"
