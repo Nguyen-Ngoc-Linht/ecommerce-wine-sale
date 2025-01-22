@@ -206,8 +206,9 @@ export default {
           name: this.infoCategory.name,
           description: this.infoCategory.description,
         }
+        console.log(this.infoCategory)
         const payload = {
-          id_attribute: this.infoCategory.id,
+          id_category: this.infoCategory.id,
           payload: params
         }
         await this.apiUpdateCategory(payload).then(res => {
@@ -238,7 +239,7 @@ export default {
       this.getList()
     },
     handlePageChange(page) {
-      this.filter.size = page
+      this.filter.page = page
       this.getList()
     },
   },

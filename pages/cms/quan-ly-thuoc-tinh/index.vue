@@ -269,7 +269,7 @@ export default {
       this.getList()
     },
     handlePageChange(page) {
-      this.filter.size = page
+      this.filter.page = page
       this.getList()
     },
   },
