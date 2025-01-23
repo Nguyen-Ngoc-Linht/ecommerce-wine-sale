@@ -134,9 +134,10 @@
                 v-model:file-list="infoProduct.listImage"
                 class="avatar-uploader mt-3 custom-upload-list w-full"
                 drag
+                :action="''"
                 :on-success="null"
                 :on-preview="null"
-                :on-remove="null"
+                :on-remove="handleRemove"
                 :on-change="(file, fileList) => {handleChangeFile(file, fileList)}"
                 :before-remove="null"
                 :on-exceed="null"
@@ -156,6 +157,8 @@
 
 <script>
 import {mapActions} from "vuex";
+import {getUserInfo} from "@/utils/cookieAuthen";
+import {el} from "@fullcalendar/core/internal-common";
 
 export default {
   layout: 'cms',
@@ -179,7 +182,11 @@ export default {
         attributes: [],
         category: {
           id: '',
-        }
+        },
+        productVariants: [],
+        productAttributes: [],
+        description: '',
+        listImage: []
       },
       nbVariant: 0,
       id_product: '',
@@ -187,6 +194,7 @@ export default {
       attributes: [],
       attributeCache: {},
       categories: [],
+      user: {},
     }
   },
   methods: {
@@ -198,6 +206,9 @@ export default {
     }),
     ...mapActions('categories', {
       apiGetCategoriesAll: 'apiGetCategoriesAll',
+    }),
+    ...mapActions('upload', {
+      apiUploadFile: 'apiUploadFile',
     }),
     backProductManage() {
       this.$router.push(`/cms/quan-ly-san-pham`)
@@ -295,14 +306,87 @@ export default {
       }
     },
     async handleChangeFile(file, fileList) {
-      console.log(file, fileList)
-    }
+      const maxFileSize = 5 * 1024 * 1024;
+
+      if (file.size > maxFileSize) {
+        this.$message.error('Dung lượng tệp không được vượt quá 5MB');
+        const index = fileList.findIndex(item => item.uid === file.uid);
+        if (index !== -1) {
+          fileList.splice(index, 1);
+        }
+        return;
+      }
+      // Kiểm tra định dạng (chỉ cho phép .jpg và .png)
+      const allowedFormats = ['image/jpeg', 'image/png'];
+
+      if (!allowedFormats.includes(file.raw.type)) {
+        this.$message.error('Chỉ hỗ trợ định dạng .jpg và .png');
+        const index = fileList.findIndex(item => item.uid === file.uid);
+        if (index !== -1) {
+          fileList.splice(index, 1);
+        }
+        return;
+      }
+      // console.log(file, fileList)
+      const formData = new FormData()
+      formData.append('file', file.raw)
+      formData.append('user_id', this.user.id)
+      formData.append('server_name', 'wine')
+
+      await this.apiUploadFile(formData).then((res) => {
+        if (res !== undefined) {
+          console.log(this.infoProduct.listImage)
+        } else {
+          const index = fileList.findIndex(item => item.uid === file.uid);
+          if (index !== -1) {
+            fileList.splice(index, 1);
+          }
+        }
+      })
+    },
+    handleRemove(file, fileList) {
+      const index = fileList.findIndex(item => item.uid === file.uid);
+      if (index !== -1) {
+        fileList.splice(index, 1);
+      }
+      return;
+    },
   },
   async created() {
+    this.user = JSON.parse(getUserInfo())
     await this.setDataDefault()
     if (this.isEdit) {
       this.id_product = this.$route.params.id_product
       await this.initData()
+    }
+  },
+  watch: {
+    nbVariant(newVal) {
+      if (newVal < 0) {
+        this.nbVariant = 0;
+        return;
+      }
+
+      const currentVariants = this.infoProduct.productVariants.length;
+
+      if (newVal > currentVariants) {
+        // Tạo các nhóm biến thể mới, giữ lại dữ liệu trước đó
+        for (let i = currentVariants; i < newVal; i++) {
+          const existingVariant = this.savedVariants?.[i] || {
+            name: `Variant ${i + 1}`,
+            price: 0,
+            quantity: 0,
+            attributes: [],
+            attributeValues: {}
+          };
+          this.infoProduct.productVariants.push(existingVariant);
+        }
+      } else if (newVal < currentVariants) {
+        // Lưu các biến thể bị xóa
+        this.savedVariants = this.infoProduct.productVariants.slice();
+        // Xóa các nhóm biến thể dư
+        this.infoProduct.productVariants.splice(newVal);
+      }
     }
   }
 }
