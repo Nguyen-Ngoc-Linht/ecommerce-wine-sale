@@ -15,16 +15,138 @@
     <div class="mt-3 px-3">
       <div class="p-3 bg-white">
         <h5>Thông tin sản phẩm</h5>
-        <el-form rè="formInfoProduct" v-model="infoProduct" :rules="rules">
+        <el-form ref="formInfoProduct" :model="infoProduct" :rules="rules">
           <el-row :gutter="10">
             <el-col :md="12" :span="24">
-              <el-form-item label="Tên sản phẩm">
+              <el-form-item prop="name" label="Tên sản phẩm">
                 <el-input v-model="infoProduct.name"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :md="12" :span="24"></el-col>
-            <el-col :md="12" :span="24"></el-col>
-            <el-col :md="12" :span="24"></el-col>
+            <el-col :md="12" :span="24">
+              <el-form-item prop="attributes" label="Thuộc tính sản phẩm" style="display: inline-block; width: 100%;">
+                <el-select
+                  v-model="infoProduct.attributes"
+                  multiple
+                  clearable
+                  collapse-tags
+                  style="width: 100%"
+                  @change="setAttribute"
+                >
+                  <el-option
+                    v-for="(item, index) in attributes"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col v-if="infoProduct.attributes.length > 0" :span="24">
+              <h6 class="text-sm mb-0 ms-1">Danh sách thuộc tính</h6>
+            </el-col>
+            <el-col
+              v-for="(attribute, index) in infoProduct.productAttributes"
+              :key="index" :md="8" :sm="12" :span="24"
+            >
+              <el-form-item :label="attribute.attribute.name">
+                <el-input v-model="attribute.value"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24"></el-col>
+            <el-col :md="12" :sm="12" :span="24">
+              <el-form-item label="Số nhóm biến thể">
+                <el-input v-model="nbVariant" type="number"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :md="12" :sm="12" :span="24">
+              <el-form-item prop="category.id" label="Danh mục sản phẩm">
+                <el-select
+                  v-model="infoProduct.category.id"
+                  clearable
+                  collapse-tags
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(item, index) in categories"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24" class="mt-2"></el-col>
+            <el-col v-for="(variant, index) in infoProduct.productVariants" :key="variant.name" :sm="12" :md="8" :span="24">
+              <el-card>
+                <el-row :gutter="12">
+                  <el-col :span="24">
+                    <h6 class="text-sm w-100">Giá</h6>
+                    <el-input v-model="variant.price" type="number"></el-input>
+                  </el-col>
+                  <el-col :span="24" class="mt-2">
+                    <h6 class="text-sm w-100">Số lượng</h6>
+                    <el-input v-model="variant.quantity" type="number"></el-input>
+                  </el-col>
+                  <el-col :span="24" class="mt-2">
+                    <h6 class="text-sm w-100">Thuộc tính</h6>
+                    <el-select
+                      v-model="variant.attributes"
+                      multiple
+                      clearable
+                      collapse-tags
+                      style="width: 100%"
+                      @change="(value) => {setAttributeVariant(value, index)}"
+                    >
+                      <el-option
+                        v-for="item in attributes"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      ></el-option>
+                    </el-select>
+                  </el-col>
+                  <el-col v-for="(attributeId) in variant.attributes" :key="attributeId" :span="24">
+                    <el-form-item :label="getAttributeName(attributeId)">
+                      <el-input
+                        v-model="variant.attributeValues[attributeId]"
+                        placeholder="Nhập giá trị">
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-card>
+            </el-col>
+            <el-col :span="24" class="mt-2"></el-col>
+            <el-col :span="24">
+              <el-form-item prop="description" label="Mô tả sản phẩm" style="display: inline-block; width: 100%;">
+                <el-input
+                  v-model="infoProduct.description"
+                  type="textarea"
+                  show-word-limit
+                  maxlength="5000"
+                  :autosize="{ minRows: 4, maxRows: 5 }"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <h6 class="text-sm mt-2">Ảnh sản phẩm</h6>
+              <el-upload
+                v-model:file-list="infoProduct.listImage"
+                class="avatar-uploader mt-3 custom-upload-list w-full"
+                drag
+                :on-success="null"
+                :on-preview="null"
+                :on-remove="null"
+                :on-change="(file, fileList) => {handleChangeFile(file, fileList)}"
+                :before-remove="null"
+                :on-exceed="null"
+                :auto-upload="false"
+                list-type="picture-card"
+                multiple
+                accept=".jpg,.png"
+              >
+              </el-upload>
+            </el-col>
           </el-row>
         </el-form>
       </div>
@@ -49,34 +171,138 @@ export default {
   },
   data() {
     return {
-      rules: {},
-      infoProduct: {},
+      rules: {
+        name: [{required: true, message: 'Trường này bắt buộc nhập', trigger: 'blur'},],
+        attributes: [{required: true, message: 'Trường này bắt buộc nhập', trigger: 'blur'},],
+      },
+      infoProduct: {
+        attributes: [],
+        category: {
+          id: '',
+        }
+      },
+      nbVariant: 0,
       id_product: '',
       processing: false,
+      attributes: [],
+      attributeCache: {},
+      categories: [],
     }
   },
   methods: {
     ...mapActions('product', {
       apiGetDetailProduct: 'apiGetDetailProduct',
     }),
+    ...mapActions('attributes', {
+      apiGetAttributesAll: 'apiGetAttributesAll',
+    }),
+    ...mapActions('categories', {
+      apiGetCategoriesAll: 'apiGetCategoriesAll',
+    }),
     backProductManage() {
       this.$router.push(`/cms/quan-ly-san-pham`)
+    },
+    getAttributeName(attributeId) {
+      const attribute = this.attributes.find(attr => attr.id === attributeId);
+      return attribute ? attribute.name : 'Thuộc tính';
+    },
+    setAttribute(selectedAttributes) {
+      if (!this.attributeCache) {
+        this.attributeCache = {};
+      }
+
+      // Lưu giá trị hiện tại của các thuộc tính vào cache
+      this.infoProduct.productAttributes.forEach((item) => {
+        this.attributeCache[item.attribute.id] = item.value;
+      });
+
+      // Tạo danh sách các thuộc tính mới dựa trên các thuộc tính đã chọn
+      // Cập nhật danh sách productAttributes
+      this.infoProduct.productAttributes = selectedAttributes.map((attributeId) => {
+        const attribute = this.attributes.find((item) => item.id === attributeId);
+        if (attribute) {
+          return {
+            attribute: attribute,
+            value: this.attributeCache[attributeId] || '', // Lấy giá trị từ cache hoặc để rỗng
+          };
+        }
+        return null;
+      }).filter((item) => item !== null);
+    },
+    setAttributeVariant(selectedAttributes, index) {
+      // Kiểm tra nếu chưa có cache thì khởi tạo
+      if (!this.attributeCache[index]) {
+        this.attributeCache[index] = {};
+      }
+
+      // Lưu giá trị hiện tại của các thuộc tính vào cache
+      this.infoProduct.productVariants[index].attributes.forEach((attributeId) => {
+        const attribute = this.attributes.find((item) => item.id === attributeId);
+        if (attribute) {
+          this.attributeCache[index][attributeId] = this.infoProduct.productVariants[index].attributeValues?.[attributeId] || '';
+        }
+      });
+
+      // Tạo danh sách thuộc tính mới dựa trên các thuộc tính đã chọn
+      this.infoProduct.productVariants[index].attributes = selectedAttributes;
+
+      // Gán lại giá trị thuộc tính từ cache hoặc để rỗng nếu là thuộc tính mới
+      this.infoProduct.productVariants[index].attributeValues = {};
+      selectedAttributes.forEach((attributeId) => {
+        this.infoProduct.productVariants[index].attributeValues[attributeId] = this.attributeCache[index][attributeId] || '';
+      });
+    },
+    async setDataDefault() {
+      try {
+        const params = {
+          name: '',
+          paged: {
+            page: 1,
+            size: 1000
+          }
+        }
+        await this.apiGetAttributesAll(params).then((res) => {
+          this.attributes = res.content
+        })
+        const params1 = {
+          name: '',
+          description: '',
+          paged: {
+            page: 1,
+            size: 1000
+          }
+        }
+        await this.apiGetCategoriesAll(params1).then((res) => {
+          this.categories = res.content
+        })
+      } catch (e) {
+        console.log(e)
+      }
     },
     async initData() {
       try {
         await this.apiGetDetailProduct(this.id_product).then((res) => {
           console.log(res)
           this.infoProduct = res.data
+          this.nbVariant = res.data.productVariants.length
+          this.infoProduct.attributes = []
+          this.infoProduct.productAttributes.forEach((item) => {
+            this.infoProduct.attributes.push(item.attribute.id)
+          })
         })
       } catch (e) {
         console.log(e)
       }
+    },
+    async handleChangeFile(file, fileList) {
+      console.log(file, fileList)
     }
   },
-  created() {
+  async created() {
+    await this.setDataDefault()
     if (this.isEdit) {
       this.id_product = this.$route.params.id_product
-      this.initData()
+      await this.initData()
     }
   }
 }

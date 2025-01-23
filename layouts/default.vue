@@ -7,6 +7,7 @@
       <nuxt />
     </div>
     <ew-footer></ew-footer>
+    <ew-link-information></ew-link-information>
   </div>
 </template>
 
@@ -16,9 +17,10 @@ import EwFooter from "~/components/common/EwFooter.vue";
 import EwNavbar from "~/components/common/EwNavbar.vue";
 import {mapActions, mapGetters} from "vuex";
 import {getSessionCart} from "@/utils/cookieAuthen";
+import EwLinkInformation from "@/components/common/EwLinkInformation.vue";
 
 export default {
-  components: {EwNavbar, EwFooter, EwHeader},
+  components: {EwLinkInformation, EwNavbar, EwFooter, EwHeader},
   data() {
     return {
       background_image: 'https://winecellar.vn/wp-content/uploads/2024/12/bg-main-tet-wcl-3.jpg'
@@ -54,5 +56,6 @@ export default {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 </style>

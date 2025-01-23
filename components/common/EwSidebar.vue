@@ -53,6 +53,18 @@
           </div>
         </div>
       </div>
+      <div class="w-100">
+        <nuxt-link
+          to="/"
+          class="nav-link-sidebar"
+          exact-active-class="activate-sidebar"
+        >
+          <div class="bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center icon-tab">
+            <i class="text-sm opacity-10 ni ni-folder-17 text-secondary" aria-hidden="true"></i>
+          </div>
+          <span class="nav-link-text" :class="false ? ' me-1' : 'ms-1'">Trang chủ</span>
+        </nuxt-link>
+      </div>
     </div>
   </div>
 </template>
