@@ -11,6 +11,10 @@
           {{ 'Sửa sản phẩm' }}
         </h5>
       </div>
+      <div>
+        <button @click="handeCreateProduct" v-if="isCreate" class="btn mb-0 bg-gradient-primary">Lưu</button>
+        <button @click="handeUpdateProduct" v-if="isEdit" class="btn mb-0 bg-gradient-primary">Cập nhật</button>
+      </div>
     </div>
     <div class="mt-3 px-3">
       <div class="p-3 bg-white">
@@ -76,18 +80,18 @@
               </el-form-item>
             </el-col>
             <el-col :span="24" class="mt-2"></el-col>
-            <el-col v-for="(variant, index) in infoProduct.productVariants" :key="variant.name" :sm="12" :md="8" :span="24">
+            <el-col v-for="(variant, index) in infoProduct.productVariants" :key="index" :span="24" class="mt-2">
               <el-card>
                 <el-row :gutter="12">
-                  <el-col :span="24">
+                  <el-col :span="8">
                     <h6 class="text-sm w-100">Giá</h6>
                     <el-input v-model="variant.price" type="number"></el-input>
                   </el-col>
-                  <el-col :span="24" class="mt-2">
+                  <el-col :span="8" class="mt-2">
                     <h6 class="text-sm w-100">Số lượng</h6>
                     <el-input v-model="variant.quantity" type="number"></el-input>
                   </el-col>
-                  <el-col :span="24" class="mt-2">
+                  <el-col :span="8" class="mt-2">
                     <h6 class="text-sm w-100">Thuộc tính</h6>
                     <el-select
                       v-model="variant.attributes"
@@ -98,17 +102,17 @@
                       @change="(value) => {setAttributeVariant(value, index)}"
                     >
                       <el-option
-                        v-for="item in attributes"
-                        :key="item.id"
+                        v-for="(item, indexList) in attributes"
+                        :key="indexList"
                         :label="item.name"
                         :value="item.id"
                       ></el-option>
                     </el-select>
                   </el-col>
-                  <el-col v-for="(attributeId) in variant.attributes" :key="attributeId" :span="24">
+                  <el-col v-for="(attributeId, indexAttribute) in variant.variantAttributes" :key="indexAttribute" :span="8">
                     <el-form-item :label="getAttributeName(attributeId)">
                       <el-input
-                        v-model="variant.attributeValues[attributeId]"
+                        v-model="attributeId.value"
                         placeholder="Nhập giá trị">
                       </el-input>
                     </el-form-item>
@@ -131,9 +135,8 @@
             <el-col :span="24">
               <h6 class="text-sm mt-2">Ảnh sản phẩm</h6>
               <el-upload
-                v-model:file-list="infoProduct.listImage"
+                :file-list="listImage"
                 class="avatar-uploader mt-3 custom-upload-list w-full"
-                drag
                 :action="''"
                 :on-success="null"
                 :on-preview="null"
@@ -186,13 +189,18 @@ export default {
         productVariants: [],
         productAttributes: [],
         description: '',
-        listImage: []
       },
+      listImage: [
+        {
+          name: 'hay',
+          url: 'ssssssssss',
+        }
+      ],
       nbVariant: 0,
       id_product: '',
       processing: false,
       attributes: [],
-      attributeCache: {},
+      attributeCache: [],
       categories: [],
       user: {},
     }
@@ -214,7 +222,7 @@ export default {
       this.$router.push(`/cms/quan-ly-san-pham`)
     },
     getAttributeName(attributeId) {
-      const attribute = this.attributes.find(attr => attr.id === attributeId);
+      const attribute = this.attributes.find(attr => attr.id === attributeId.attributeId);
       return attribute ? attribute.name : 'Thuộc tính';
     },
     setAttribute(selectedAttributes) {
@@ -241,26 +249,28 @@ export default {
       }).filter((item) => item !== null);
     },
     setAttributeVariant(selectedAttributes, index) {
-      // Kiểm tra nếu chưa có cache thì khởi tạo
+      // Khởi tạo cache nếu chưa có
       if (!this.attributeCache[index]) {
         this.attributeCache[index] = {};
       }
 
       // Lưu giá trị hiện tại của các thuộc tính vào cache
-      this.infoProduct.productVariants[index].attributes.forEach((attributeId) => {
-        const attribute = this.attributes.find((item) => item.id === attributeId);
-        if (attribute) {
-          this.attributeCache[index][attributeId] = this.infoProduct.productVariants[index].attributeValues?.[attributeId] || '';
+      const currentAttributes = this.infoProduct.productVariants[index].variantAttributes || [];
+      currentAttributes.forEach((attribute) => {
+        if (attribute && attribute.attributeId) {
+          this.attributeCache[index][attribute.attributeId] = attribute.value || '';
         }
       });
 
-      // Tạo danh sách thuộc tính mới dựa trên các thuộc tính đã chọn
-      this.infoProduct.productVariants[index].attributes = selectedAttributes;
-
-      // Gán lại giá trị thuộc tính từ cache hoặc để rỗng nếu là thuộc tính mới
-      this.infoProduct.productVariants[index].attributeValues = {};
-      selectedAttributes.forEach((attributeId) => {
-        this.infoProduct.productVariants[index].attributeValues[attributeId] = this.attributeCache[index][attributeId] || '';
+      // Cập nhật danh sách variantAttributes
+      this.infoProduct.productVariants[index].variantAttributes = selectedAttributes.map((attributeId) => {
+        const existingValue = this.attributeCache[index][attributeId] || '';
+        const attributeName = this.attributes.find((item) => item.id === attributeId)?.name || '';
+        return {
+          attributeId,
+          value: existingValue,
+          name: attributeName,
+        };
       });
     },
     async setDataDefault() {
@@ -300,10 +310,63 @@ export default {
           this.infoProduct.productAttributes.forEach((item) => {
             this.infoProduct.attributes.push(item.attribute.id)
           })
+          this.setVariantAttribute()
+          this.setListImage()
         })
       } catch (e) {
         console.log(e)
       }
+    },
+    setVariantAttribute() {
+      const variants = this.infoProduct.productVariants
+      variants.forEach((variant) => {
+        variant.attributes = []
+        variant.variantAttributes.forEach((item) => {
+          variant.attributes.push(item.attributeId)
+          item.name = this.attributes.find((att) => att.id === item.attributeId)?.name || '';
+        })
+      })
+    },
+    setListImage() {
+      const lstImage = this.infoProduct.images.map((image, index) => ({
+        name: `Image-${index + 1}`,
+        url: image.url,
+        status: 'success',
+      }));
+
+      this.listImage = lstImage;
+      console.log(this.listImage, 'lstImage')
+    },
+    async handeCreateProduct() {
+      try {
+        await Promise.all([
+          this.validForm()
+        ])
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async handeUpdateProduct() {
+      try {
+        await Promise.all([
+          this.validForm()
+        ])
+        console.log(this.infoProduct)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+
+    validForm() {
+      return new Promise((resolve, reject) => {
+        this.$refs.formInfoProduct.validate(valid => {
+          if (valid) {
+            resolve(true);
+          } else {
+            reject('Lỗi validate form chính');
+          }
+        });
+      })
     },
     async handleChangeFile(file, fileList) {
       const maxFileSize = 5 * 1024 * 1024;
@@ -349,7 +412,6 @@ export default {
       if (index !== -1) {
         fileList.splice(index, 1);
       }
-      return;
     },
   },
   async created() {
@@ -376,8 +438,8 @@ export default {
             name: `Variant ${i + 1}`,
             price: 0,
             quantity: 0,
-            attributes: [],
-            attributeValues: {}
+            variantAttributes: [],
+            variantAttributesValue: {}
           };
           this.infoProduct.productVariants.push(existingVariant);
         }
