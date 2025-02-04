@@ -34,6 +34,17 @@ const actions = {
     } catch (e) {
       console.log(e)
     }
+  },
+  async apiDeleteAttribute({commit, state}, id_attribute) {
+    try {
+      let { data } = await this.$axios.delete(`${API_ATTRIBUTES.apiAttributes}/${id_attribute}`)
+
+      if (data.code === 200) {
+        return data
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
 };
 

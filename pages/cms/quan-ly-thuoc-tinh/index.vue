@@ -89,6 +89,18 @@
         </div>
       </div>
     </el-dialog>
+    <el-dialog
+      title="Xóa thuộc tính"
+      :visible.sync="showDialogDelete"
+      width="500px"
+    >
+      <div>
+        <div class="mt-2 d-flex justify-content-end gap-2">
+          <button @click="showDialogDelete = false" class="btn bg-gradient-secondary">Hủy</button>
+          <button v-if="typeDialog" @click="handleDelete" class="btn bg-gradient-primary">Xác nhận</button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -157,6 +169,7 @@ export default {
       apiGetAttributesAll: 'apiGetAttributesAll',
       apiCreateAttribute: 'apiCreateAttribute',
       apiUpdateAttribute: 'apiUpdateAttribute',
+      apiDeleteAttribute: 'apiDeleteAttribute',
     }),
     async getList() {
       try {
@@ -186,6 +199,16 @@ export default {
       this.showDialog = true
       this.typeDialog = false
     },
+    async handleDelete() {
+      await this.apiDeleteAttribute(this.infoAttributes.id).then(res => {
+        if (res !== undefined) {
+          this.$message.success('Xoá thuộc tính thành công')
+          this.showDialogDelete = false
+          this.getList()
+        }
+        this.showDialogDelete = false
+      })
+    },
     openDialogEdit(data) {
       this.titleDialog = 'Sửa thuộc tính'
       this.typeDialog = true
@@ -201,6 +224,7 @@ export default {
         this.$refs.formInfoAttributes.resetFields();
       });
       this.showDialog = false
+      this.showDialogDelete = false
       this.getList()
     },
     async handleCreateAttributes() {

@@ -4,7 +4,8 @@ const cookiesConfig = require("./../config/cookies.env");
 const AccessToken = cookiesConfig.AUTHEN.AccessToken;
 const RefreshToken = cookiesConfig.AUTHEN.RefreshToken;
 const UserInfo = cookiesConfig.AUTHEN.UserInfo;
-const DeviceUsingWifi = cookiesConfig.AUTHEN.DeviceUsingWifi;
+const LocationDefault = cookiesConfig.AUTHEN.LocationDefault;
+const LocationList = cookiesConfig.AUTHEN.LocationList;
 const SsVideo5 = cookiesConfig.AUTHEN.SsVideo5;
 const SearchKey = cookiesConfig.AUTHEN.SearchKey;
 const FirebaseToken = cookiesConfig.AUTHEN.FirebaseToken;
@@ -69,5 +70,23 @@ export function setSessionCart(data) {
 export function removeSessionCart() {
   if (process.browser) {
     localStorage.removeItem(SessionCart);
+  }
+}
+
+export function getLocation() {
+  if (process.browser) {
+    return localStorage.getItem(LocationDefault);
+  }
+}
+
+export function setLocation(data) {
+  if (process.browser) {
+    localStorage.setItem(LocationDefault, JSON.stringify(data));
+  }
+}
+
+export function removeLocation() {
+  if (process.browser) {
+    localStorage.removeItem(LocationDefault);
   }
 }

@@ -30,23 +30,38 @@
               <div class="w-100">
                 <div class="d-flex justify-content-between align-items-center">
                   <h6 class="text-info mb-0">Thông tin thanh toán</h6>
-                  <span @click="changeInfoPayment" class="text-sm text-secondary cursor-pointer">Thay đổi</span>
+                  <span
+                    v-if="isHaveInfoPayment"
+                    @click="changeInfoPayment"
+                    class="text-sm text-secondary cursor-pointer"
+                  >
+                    Thay đổi
+                  </span>
+                  <span
+                    v-if="!isHaveInfoPayment"
+                    @click="addLocationDefault"
+                    class="text-sm text-secondary cursor-pointer"
+                  >
+                    Thêm thông tin nhận hàng
+                  </span>
                 </div>
-                <div class="d-flex align-items-center mb-1 mt-2">
-                  <p class="text-sm text-secondary">Tên người nhận:</p>
-                  <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.name }}</p>
-                </div>
-                <div class="d-flex align-items-center mb-1">
-                  <p class="text-sm text-secondary">Số điện thoại:</p>
-                  <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.phone }}</p>
-                </div>
-                <div class="d-flex align-items-center mb-1">
-                  <p class="text-sm text-secondary">Tỉnh thành phố:</p>
-                  <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.city }}</p>
-                </div>
-                <div class="d-flex align-items-center mb-1">
-                  <p class="text-sm text-secondary">Địa chỉ nhận hàng:</p>
-                  <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.address }}</p>
+                <div v-if="isHaveInfoPayment">
+                  <div class="d-flex align-items-center mb-1 mt-2">
+                    <p class="text-sm text-secondary">Tên người nhận:</p>
+                    <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.name }}</p>
+                  </div>
+                  <div class="d-flex align-items-center mb-1">
+                    <p class="text-sm text-secondary">Số điện thoại:</p>
+                    <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.phone }}</p>
+                  </div>
+                  <div class="d-flex align-items-center mb-1">
+                    <p class="text-sm text-secondary">Tỉnh thành phố:</p>
+                    <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.city }}</p>
+                  </div>
+                  <div class="d-flex align-items-center mb-1">
+                    <p class="text-sm text-secondary">Địa chỉ nhận hàng:</p>
+                    <p class="text-sm text-black font-weight-bold ms-2">{{ infoPayment.address }}</p>
+                  </div>
                 </div>
               </div>
             </el-card>
@@ -54,27 +69,51 @@
         </el-row>
       </div>
     </div>
+
+    <el-dialog
+      :title="'Chọn địa chỉ giao hàng'"
+      :visible.sync="showDialogLocation"
+    >
+      <template>
+        <Location></Location>
+      </template>
+    </el-dialog>
+    <el-dialog
+      :title="'Thêm địa chỉ nhận hàng'"
+      :visible.sync="showAddLocation"
+      width="600px"
+    >
+      <template>
+        <Location></Location>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {mapActions, mapGetters} from "vuex";
 import CartProduct from "@/components/features/CartProduct.vue";
+import Location from "@/components/features/Location.vue";
+import {getLocation} from "@/utils/cookieAuthen";
 
 export default {
-  components: {CartProduct},
+  components: {Location, CartProduct},
   data() {
     return {
       infoCart: {},
       infoPayment: {
-        name: 'Nguyễn Ngọc Linh',
-        phone: '0968855491',
-        city: 'xã Thư Phú, Thường Tín, Hà Nội',
-        address: 'Đội 2 Vĩnh Lộc, Thư Phú, Thường Tín Hà Nội',
+        name: '',
+        phone: '',
+        city: '',
+        address: '',
       },
+      isHaveInfoPayment: false,
       products: [],
       background_image: 'https://winecellar.vn/wp-content/uploads/2024/12/bg-main-tet-wcl-3.jpg',
       productsBuy: [],
+
+      showDialogLocation: false,
+      showAddLocation: false,
     }
   },
   computed: {
@@ -118,10 +157,20 @@ export default {
     },
     removeProductBuy(index) {
     },
-    changeInfoPayment() {}
+    changeInfoPayment() {
+      this.showDialogLocation = true
+    },
+    addLocationDefault() {
+      this.showAddLocation = true
+    }
   },
   created() {
     this.getListProduct()
+    const infoLocation = JSON.parse(getLocation())
+    if (infoLocation !== null) {
+      this.infoPayment = infoLocation
+      this.isHaveInfoPayment = true
+    }
   }
 }
 </script>

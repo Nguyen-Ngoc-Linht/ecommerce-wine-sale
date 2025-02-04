@@ -39,6 +39,19 @@
       </ew-table>
       <pagination class="mt-2"></pagination>
     </div>
+
+    <el-dialog
+      title="Xóa sản phẩm"
+      :visible.sync="showDialogDelete"
+      width="500px"
+    >
+      <div>
+        <div class="mt-2 d-flex justify-content-end gap-2">
+          <button @click="showDialogDelete = false" class="btn bg-gradient-secondary">Hủy</button>
+          <button @click="handleDeleteProduct" class="btn bg-gradient-primary">Xác nhận</button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -83,11 +96,14 @@ export default {
           prop: 'operation'
         },
       ],
+      infoProduct: {},
+      showDialogDelete: false
     }
   },
   methods: {
     ...mapActions('product', {
       apiGetAllProducts: 'apiGetAllProducts',
+      apiDeleteProduct: 'apiDeleteProduct',
     }),
     async getList() {
       try {
@@ -109,6 +125,22 @@ export default {
     },
     handleEditProduct(data) {
       this.$router.push(`/cms/quan-ly-san-pham/edit/${data.id}`)
+    },
+    openDialogDelete(data) {
+      this.infoProduct = data
+      this.showDialogDelete = true
+    },
+    async handleDeleteProduct() {
+      await this.apiDeleteProduct(this.infoProduct.id).then(res => {
+        if (res !== undefined) {
+          this.$message.success('Xóa sản phẩm thành công')
+          this.getList()
+          this.showDialogDelete = false
+        } else {
+          this.showDialogDelete = false
+          this.$message.error('Xóa sản phẩm không thành công')
+        }
+      })
     }
   },
   created() {

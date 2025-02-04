@@ -18,7 +18,7 @@ const actions = {
     try {
       let {data} = await this.$axios.post(`${API_PRODUCT.apiProduct}`, payload)
 
-      if (data.code === CONSTANTS.SUCCESS) {
+      if (data.code === 201) {
         return data
       }
     } catch (e) {
@@ -39,6 +39,17 @@ const actions = {
   async apiUpdateProduct({commit, state}, {id_product, payload}) {
     try {
       let {data} = await this.$axios.put(`${API_PRODUCT.apiProduct}/${id_product}`, payload)
+      if (data.code === CONSTANTS.SUCCESS) {
+        return data
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  },
+  async apiDeleteProduct({commit, state}, id_product) {
+    try {
+      let { data } = await this.$axios.delete(`${API_PRODUCT.apiProduct}/${id_product}`);
+
       if (data.code === CONSTANTS.SUCCESS) {
         return data
       }

@@ -22,7 +22,7 @@
           <h3 class="mb-0 text-black">Chất từ vị vang - Siêu sale bùng nổ</h3>
           <h3>Kết thúc sau</h3>
         </div>
-        <el-row :gutter="20">
+        <div class="row">
           <el-col
             v-for="(product, index) in products"
             :key="index"
@@ -31,7 +31,7 @@
           >
             <Item :info-item="product"></Item>
           </el-col>
-        </el-row>
+        </div>
       </div>
       <div class="mt-4 pb-4">
         <h3 class="font-weight-bold text-primary text-center">Loại rượu vang</h3>

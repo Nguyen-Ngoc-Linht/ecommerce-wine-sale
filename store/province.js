@@ -1,10 +1,11 @@
 import {CONSTANTS} from "@/utils/constant";
 import {API_CATEGORY} from "@/api/category";
+import {API_PROVINCE} from "@/api/province";
 
 const actions = {
-  async apiGetCategoriesAll({commit, state}, payload) {
+  async apiGetProvince({commit, state}) {
     try {
-      let {data} = await this.$axios.post(`${API_CATEGORY.apiCategoriesAll}`, payload)
+      let {data} = await this.$axios.get(`${API_PROVINCE.apiProvince}`)
 
       if (data.code === CONSTANTS.SUCCESS) {
         return data.data
@@ -13,9 +14,9 @@ const actions = {
       console.log(e)
     }
   },
-  async apiCreateCategory({commit, state}, payload) {
+  async apiDistricts({commit, state}, id_province) {
     try {
-      let { data } = await this.$axios.post(`${API_CATEGORY.apiCategory}`, payload)
+      let { data } = await this.$axios.get(`${API_PROVINCE.apiDistricts}/${id_province}`)
 
       if (data.code === 201) {
         return data
@@ -24,9 +25,9 @@ const actions = {
       console.log(e)
     }
   },
-  async apiUpdateCategory({commit, state}, {id_category, payload}) {
+  async apiGetWards({commit, state}, id_districts) {
     try {
-      let { data } = await this.$axios.put(`${API_CATEGORY.apiCategory}/${id_category}`, payload)
+      let { data } = await this.$axios.get(`${API_PROVINCE.apiWards}/${id_districts}`)
 
       if (data.code === CONSTANTS.SUCCESS) {
         return data

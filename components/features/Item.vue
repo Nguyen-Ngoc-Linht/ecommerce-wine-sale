@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="bg-white w-100 card-style">
+  <div class="h-100">
+    <div class="bg-white w-100 card-style h-100">
       <div class="image-item">
         <img :src="infoItem.images[0].url" alt="banner" class="w-100 h-100" style="border-radius: 12px">
         <div class="action-item">
@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="p-3 d-flex flex-column">
-        <h5 class="text-black">{{ infoItem.name }}</h5>
+        <h5 class="text-black info-variant-name">{{ infoItem.name }}</h5>
         <h6 class="text-danger mb-1">{{ formatPrice(infoItem.price) }}</h6>
         <div class="tag-category">
           <span class="bg-gradient bg-light px-2 py-1 rounded-2 text-black font-weight-bold text-sm">
@@ -48,11 +48,11 @@
     >
       <template>
         <div class="w-100">
-          <div class="d-flex">
+          <div class="d-flex w-100">
             <div class="avatar-product">
               <img :src="infoItem.images[0].url" alt="" class="w-100 h-100">
             </div>
-            <div class="info-variant d-flex flex-column ms-3">
+            <div class="info-variant d-flex flex-column ms-3 w-100">
               <h6 class="mb-1">{{ infoItem.name }}</h6>
               <h5 class="text-danger mb-1">{{ variant.price }}</h5>
               <span>Hàng trong kho: {{ variant.quantity }}</span>
@@ -104,7 +104,12 @@ export default {
       return new Intl.NumberFormat('vi-VN').format(price) + ' đ';
     },
     openDialogBuyNow() {
-      this.showBuyDialog = true
+      if (this.infoItem.productVariants.length > 0) {
+        this.showChooseVariant = true
+        this.variant = this.infoItem.productVariants[0]
+      } else {
+        this.showBuyDialog = true
+      }
     },
     async addProductCart() {
       try {
@@ -175,6 +180,16 @@ export default {
 .btn-activate {
   color: #7a000e !important;
   border-color: #7a000e !important;
+}
+
+.info-variant-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  width: 100%;
 }
 
 .image-item {

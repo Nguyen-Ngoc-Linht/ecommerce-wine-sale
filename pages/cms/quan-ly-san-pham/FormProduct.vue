@@ -87,11 +87,11 @@
                     <h6 class="text-sm w-100">Giá</h6>
                     <el-input v-model="variant.price" type="number"></el-input>
                   </el-col>
-                  <el-col :span="8" class="mt-2">
+                  <el-col :span="8">
                     <h6 class="text-sm w-100">Số lượng</h6>
                     <el-input v-model="variant.quantity" type="number"></el-input>
                   </el-col>
-                  <el-col :span="8" class="mt-2">
+                  <el-col :span="8">
                     <h6 class="text-sm w-100">Thuộc tính</h6>
                     <el-select
                       v-model="variant.attributes"
@@ -142,7 +142,7 @@
                 :on-preview="null"
                 :on-remove="handleRemove"
                 :on-change="(file, fileList) => {handleChangeFile(file, fileList)}"
-                :before-remove="null"
+                :before-remove="beforeRemove"
                 :on-exceed="null"
                 :auto-upload="false"
                 list-type="picture-card"
@@ -162,6 +162,7 @@
 import {mapActions} from "vuex";
 import {getUserInfo} from "@/utils/cookieAuthen";
 import {el} from "@fullcalendar/core/internal-common";
+import {DEV_BASE_URL_API} from "@/config/axios.env";
 
 export default {
   layout: 'cms',
@@ -189,13 +190,9 @@ export default {
         productVariants: [],
         productAttributes: [],
         description: '',
+        images: [],
       },
-      listImage: [
-        {
-          name: 'hay',
-          url: 'ssssssssss',
-        }
-      ],
+      listImage: [],
       nbVariant: 0,
       id_product: '',
       processing: false,
@@ -203,11 +200,14 @@ export default {
       attributeCache: [],
       categories: [],
       user: {},
+      baseUrl: '',
     }
   },
   methods: {
     ...mapActions('product', {
       apiGetDetailProduct: 'apiGetDetailProduct',
+      apiUpdateProduct: 'apiUpdateProduct',
+      apiCreateProduct: 'apiCreateProduct',
     }),
     ...mapActions('attributes', {
       apiGetAttributesAll: 'apiGetAttributesAll',
@@ -330,10 +330,9 @@ export default {
     setListImage() {
       const lstImage = this.infoProduct.images.map((image, index) => ({
         name: `Image-${index + 1}`,
-        url: image.url,
+        url: this.baseUrl + image.url.replace(/^\.\/uploads/, '/uploads'),
         status: 'success',
       }));
-
       this.listImage = lstImage;
       console.log(this.listImage, 'lstImage')
     },
@@ -342,6 +341,14 @@ export default {
         await Promise.all([
           this.validForm()
         ])
+        const params = this.formatDataSend()
+        console.log(params, 'params')
+        await this.apiCreateProduct(params).then((res) => {
+          if (res !== undefined) {
+            this.$message.success('Tạo sản phẩm thành công')
+            this.backProductManage()
+          }
+        })
       } catch (e) {
         console.log(e)
       }
@@ -351,7 +358,17 @@ export default {
         await Promise.all([
           this.validForm()
         ])
-        console.log(this.infoProduct)
+        const payload = {
+          id_product: this.id_product,
+          payload: this.formatDataSend(),
+        }
+        await this.apiUpdateProduct(payload).then((res) => {
+          if (res !== undefined) {
+            console.log(res)
+            this.$message.success('Cập nhật sản phẩm thành công')
+            this.backProductManage()
+          }
+        })
       } catch (e) {
         console.log(e)
       }
@@ -367,6 +384,37 @@ export default {
           }
         });
       })
+    },
+    formatDataSend() {
+      const attributeProduct = this.infoProduct.productAttributes
+      const attributeSend = []
+      attributeProduct.forEach((item) => {
+        attributeSend.push({
+          value: item.value,
+          productAttributeId: item.id,
+          attributeId: item.attribute.id
+        })
+      })
+
+      const variantsSend = []
+      this.infoProduct.productVariants.forEach((item) => {
+        variantsSend.push({
+          variantId: item.id,
+          price: item.price,
+          quantity: item.quantity,
+          attributes: item.variantAttributes
+        })
+      })
+      const params = {
+        name: this.infoProduct.name,
+        description: this.infoProduct.description,
+        categoryId: this.infoProduct.category.id,
+        attributes: attributeSend,
+        images: this.infoProduct.images,
+        variants: variantsSend,
+      }
+
+      return params
     },
     async handleChangeFile(file, fileList) {
       const maxFileSize = 5 * 1024 * 1024;
@@ -398,7 +446,9 @@ export default {
 
       await this.apiUploadFile(formData).then((res) => {
         if (res !== undefined) {
-          console.log(this.infoProduct.listImage)
+          this.infoProduct.images.push({
+            url: res.filePath
+          })
         } else {
           const index = fileList.findIndex(item => item.uid === file.uid);
           if (index !== -1) {
@@ -407,15 +457,24 @@ export default {
         }
       })
     },
-    handleRemove(file, fileList) {
+    beforeRemove(file, fileList) {
+      console.log('voday', file, fileList)
       const index = fileList.findIndex(item => item.uid === file.uid);
+      console.log(index, 'gia tri')
       if (index !== -1) {
-        fileList.splice(index, 1);
+        // fileList.splice(index, 1);
+        this.infoProduct.images.splice(index, 1);
+        console.log(this.infoProduct.images)
       }
+
+      return true
+    },
+    handleRemove(file, fileList) {
     },
   },
   async created() {
     this.user = JSON.parse(getUserInfo())
+    this.baseUrl = DEV_BASE_URL_API + 'media-service/api/v1.0/images'
     await this.setDataDefault()
     if (this.isEdit) {
       this.id_product = this.$route.params.id_product

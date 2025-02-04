@@ -77,6 +77,18 @@
         </div>
       </div>
     </el-dialog>
+    <el-dialog
+      title="Xóa sản phẩm"
+      :visible.sync="showDialogDelete"
+      width="500px"
+    >
+      <div>
+        <div class="mt-2 d-flex justify-content-end gap-2">
+          <button @click="showDialogDelete = false" class="btn bg-gradient-secondary">Hủy</button>
+          <button @click="handleDeleteCategory" class="btn bg-gradient-primary">Xác nhận</button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -128,6 +140,7 @@ export default {
       apiGetCategoriesAll: 'apiGetCategoriesAll',
       apiCreateCategory: 'apiCreateCategory',
       apiUpdateCategory: 'apiUpdateCategory',
+      apiDeleteCategory: 'apiDeleteCategory',
     }),
     async getList() {
       try {
@@ -167,6 +180,15 @@ export default {
     openDialogDelete(data) {
       this.infoCategory = data
       this.showDialogDelete = true
+    },
+    async handleDeleteCategory() {
+      await this.apiDeleteCategory(this.infoCategory.id).then(res => {
+        if (res !== undefined) {
+          this.$message.success('Xóa danh mục thành công')
+          this.getList()
+        }
+        this.showDialogDelete = false
+      })
     },
     closeDialog() {
       this.$nextTick(() => {
