@@ -323,6 +323,7 @@ export default {
         variant.attributes = []
         variant.variantAttributes.forEach((item) => {
           variant.attributes.push(item.attributeId)
+          item.variantAttributeId = item.productVariantAttributeId
           item.name = this.attributes.find((att) => att.id === item.attributeId)?.name || '';
         })
       })

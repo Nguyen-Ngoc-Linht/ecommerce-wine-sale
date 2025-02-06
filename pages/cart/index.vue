@@ -73,18 +73,20 @@
     <el-dialog
       :title="'Chọn địa chỉ giao hàng'"
       :visible.sync="showDialogLocation"
+      width="600px"
     >
       <template>
-        <Location></Location>
+        <ListLocation></ListLocation>
       </template>
     </el-dialog>
     <el-dialog
       :title="'Thêm địa chỉ nhận hàng'"
       :visible.sync="showAddLocation"
+      @open="resetForm"
       width="600px"
     >
       <template>
-        <Location></Location>
+        <Location ref="locationForm" @closeDialog="showAddLocation = false" @addLocation="addLocationSuccess"></Location>
       </template>
     </el-dialog>
   </div>
@@ -95,9 +97,10 @@ import {mapActions, mapGetters} from "vuex";
 import CartProduct from "@/components/features/CartProduct.vue";
 import Location from "@/components/features/Location.vue";
 import {getLocation} from "@/utils/cookieAuthen";
+import ListLocation from "@/components/features/ListLocation.vue";
 
 export default {
-  components: {Location, CartProduct},
+  components: {ListLocation, Location, CartProduct},
   data() {
     return {
       infoCart: {},
@@ -160,8 +163,18 @@ export default {
     changeInfoPayment() {
       this.showDialogLocation = true
     },
+
     addLocationDefault() {
       this.showAddLocation = true
+    },
+    addLocationSuccess() {
+      this.showAddLocation = false
+      this.infoPayment = JSON.parse(getLocation())
+    },
+    resetForm() {
+      this.$nextTick(() => {
+        this.$refs.locationForm?.resetForm();
+      });
     }
   },
   created() {

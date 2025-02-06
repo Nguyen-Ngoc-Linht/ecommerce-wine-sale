@@ -90,3 +90,21 @@ export function removeLocation() {
     localStorage.removeItem(LocationDefault);
   }
 }
+
+export function getLstLocation() {
+  if (process.browser) {
+    return localStorage.getItem(LocationList);
+  }
+}
+
+export function setLstLocation(data) {
+  if (process.browser) {
+    localStorage.setItem(LocationList, JSON.stringify(data));
+  }
+}
+
+export function removeLstLocation() {
+  if (process.browser) {
+    localStorage.removeItem(LocationList);
+  }
+}

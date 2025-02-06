@@ -2,7 +2,7 @@
   <div class="h-100">
     <div class="bg-white w-100 card-style h-100">
       <div class="image-item">
-        <img :src="infoItem.images[0].url" alt="banner" class="w-100 h-100" style="border-radius: 12px">
+        <img :src="imageLink" alt="banner" class="w-100 h-100" style="border-radius: 12px">
         <div class="action-item">
           <div
             class="d-flex py-2 align-items-center justify-content-center w-100 bg-white gap-2"
@@ -50,7 +50,7 @@
         <div class="w-100">
           <div class="d-flex w-100">
             <div class="avatar-product">
-              <img :src="infoItem.images[0].url" alt="" class="w-100 h-100">
+              <img :src="baseUrl + infoItem.images[0].url.replace(/^\.\/uploads/, '/uploads')" alt="" class="w-100 h-100">
             </div>
             <div class="info-variant d-flex flex-column ms-3 w-100">
               <h6 class="mb-1">{{ infoItem.name }}</h6>
@@ -78,6 +78,7 @@
 import BuyNow from "@/components/features/BuyNow.vue";
 import {mapActions} from "vuex";
 import {getSessionCart} from "@/utils/cookieAuthen";
+import {DEV_BASE_URL_API} from "@/config/axios.env";
 
 export default {
   components: {BuyNow},
@@ -92,6 +93,8 @@ export default {
       showChooseVariant: false,
       variant: {},
       isVariantActive: 0,
+      baseUrl: '',
+      imageLink: '',
     }
   },
   methods: {
@@ -113,10 +116,11 @@ export default {
     },
     async addProductCart() {
       try {
-        if (this.infoItem.productVariants.length > 0) {
+        if (this.infoItem.productVariants.length > 1) {
           this.showChooseVariant = true
           this.variant = this.infoItem.productVariants[0]
         } else {
+          this.variant = this.infoItem.productVariants[0]
           await this.handleAddProduct()
         }
       } catch (e) {
@@ -159,6 +163,10 @@ export default {
       this.variant = this.infoItem.productVariants[index]
     }
   },
+  created() {
+    this.baseUrl = DEV_BASE_URL_API + 'media-service/api/v1.0/images'
+    this.imageLink = this.baseUrl + this.infoItem.images[0].url.replace(/^\.\/uploads/, '/uploads')
+  }
 }
 </script>
 

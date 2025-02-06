@@ -18,8 +18,8 @@ const actions = {
     try {
       let { data } = await this.$axios.get(`${API_PROVINCE.apiDistricts}/${id_province}`)
 
-      if (data.code === 201) {
-        return data
+      if (data.code === 200) {
+        return data.data
       }
     } catch (e) {
       console.log(e)
@@ -30,7 +30,7 @@ const actions = {
       let { data } = await this.$axios.get(`${API_PROVINCE.apiWards}/${id_districts}`)
 
       if (data.code === CONSTANTS.SUCCESS) {
-        return data
+        return data.data
       }
     } catch (e) {
       console.log(e)
