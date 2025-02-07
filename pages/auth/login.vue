@@ -14,13 +14,18 @@
         </el-form>
 
         <button @click="handleLogin" class="btn bg-gradient-success">Đăng nhập</button>
+
+        <button @click="handleLoginWithGoogle" class="btn bg-gradient-danger">
+          <i class="fab fa-google"></i>  Đăng nhập với Google
+        </button>
+      </div>
       </div>
     </div>
-  </div>
+<!--  </div>-->
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import {mapActions, mapGetters, mapState} from "vuex";
 
 export default {
   layout: 'empty',
@@ -36,6 +41,7 @@ export default {
   methods: {
     ...mapActions('auth', {
       apiSignIn: 'apiSignIn',
+      apiSignInWithGoogle: 'apiSignInWithGoogle',
     }),
     async handleLogin() {
       try {
@@ -48,7 +54,20 @@ export default {
           this.$router.push('/cms')
         })
       } catch (e) {}
+    },
+
+    async handleLoginWithGoogle() {
+      try {
+        await this.apiSignInWithGoogle().then(res => {
+          console.log(res)
+          // this.$router.push(res)
+          window.open(res, "GoogleLogin", "width=500,height=600,left=100,top=100")
+        })
+      } catch (e) {}
     }
+  },
+  computed: {
+    ...mapGetters('auth', ['user'])
   },
   created() {
   }

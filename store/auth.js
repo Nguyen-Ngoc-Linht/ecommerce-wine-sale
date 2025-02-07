@@ -26,13 +26,36 @@ const actions = {
       console.log(e)
     }
   },
+
+  async apiSignInWithGoogle({ commit, state }, payload) {
+    try {
+      let { data } = await this.$axios.get(`${API_AUTH.apiSignInWithGoogle}`, {
+        headers: {
+          'Accept-Language': 'vi'
+        }
+      })
+      return data
+    } catch (e) {
+      console.log(e)
+    }
+  }
 };
 
-const state = () => ({});
+const state = () => ({
+  user: [],
+});
 
-const getters = {};
+const getters = {
+  user(state) {
+    return state.user
+  }
+};
 
-const mutations = {};
+const mutations = {
+  UPDATE_USER(state, payload) {
+    state.user = payload;
+  }
+};
 
 export default {
   actions,
