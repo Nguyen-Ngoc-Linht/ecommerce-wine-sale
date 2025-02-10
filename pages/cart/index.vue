@@ -12,7 +12,11 @@
               <h6>Sản phẩm</h6>
               <div class="d-flex flex-column mt-3">
                 <div v-for="(product, index) in products" :key="product.id">
-                  <CartProduct :info-card="product.product">
+                  <CartProduct
+                    :info-card="product"
+                    @increaseProduct="handleIncreaseProduct(product, index)"
+                    @reductionProduct="handleReductionProduct(product, index)"
+                  >
                     <template #checkbox>
                       <div class="h-100 d-flex align-items-center me-3">
                         <el-checkbox v-model="product.checkBuy" @change="handleChangeProduct(index)"></el-checkbox>
@@ -64,6 +68,26 @@
                   </div>
                 </div>
               </div>
+              <div v-if="productsBuy.length > 0">
+                <h6>Danh sách sản phẩm mua</h6>
+                <div v-for="(product, index) in productsBuy" :key="`productBuy${index}`">
+                  <CardProductBuy :info-card="product">
+                  </CardProductBuy>
+                  <hr class="my-3">
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <p class="mb-0">Tổng tiền sản phẩm:</p>
+                  <p class="mb-0 text-bold">{{ formatValue(totalProductBuy()) }}</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <p class="mb-0">Chi phí vận chuyển:</p>
+                  <p class="mb-0 text-bold">{{ formatValue(productsBuy.length*30000) }}</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <p class="mb-0">Tổng tiền thanh toán:</p>
+                  <p class="mb-0 text-danger text-bold">{{ formatValue(totalProductBuy() + productsBuy.length*30000) }}</p>
+                </div>
+              </div>
             </el-card>
           </el-col>
         </el-row>
@@ -96,11 +120,13 @@
 import {mapActions, mapGetters} from "vuex";
 import CartProduct from "@/components/features/CartProduct.vue";
 import Location from "@/components/features/Location.vue";
-import {getLocation} from "@/utils/cookieAuthen";
+import {getLocation, getSessionCart} from "@/utils/cookieAuthen";
 import ListLocation from "@/components/features/ListLocation.vue";
+import CardProductBuy from "@/components/features/CardProductBuy.vue";
+import {formatPrice} from "@/utils/formatData";
 
 export default {
-  components: {ListLocation, Location, CartProduct},
+  components: {CardProductBuy, ListLocation, Location, CartProduct},
   data() {
     return {
       infoCart: {},
@@ -134,11 +160,13 @@ export default {
   methods: {
     ...mapActions('cart', {
       apiGetCartSessionKey: 'apiGetCartSessionKey',
+      apiAddProductCartSession: 'apiAddProductCartSession',
+      apiRemoveProductCartSession: 'apiRemoveProductCartSession',
     }),
     async getListProduct() {
       try {
         await this.apiGetCartSessionKey().then((res) => {
-          console.log(res.cartItems)
+          // console.log(res.cartItems)
           this.products = res.cartItems
         })
       } catch (e) {
@@ -147,18 +175,90 @@ export default {
     },
     handleChangeProduct(index) {
       const product = this.products[index];
-      console.log(product.checkBuy, 'log')
       if (product.checkBuy) {
-        this.addProductBuy()
+        this.addProductBuy(index)
       } else {
-        this.removeProductBuy()
+        this.removeProductBuy(index)
       }
     },
     addProductBuy(index) {
       const product = this.products[index];
+      product.indexList = index
       this.productsBuy.push(product);
     },
+
+    async handleIncreaseProduct(product, index) {
+      const sessionKey = getSessionCart()
+      const params = {
+        cartId : sessionKey,
+        productId : product.product.id,
+        product : {
+          id: product.product.id,
+          name: product.product.name,
+          description: product.product.description,
+          url: product.product.images[0].url
+        },
+        variant: {
+          id: product.product.productVariants[0].id
+        },
+        quantity: 1
+      }
+      await this.apiAddProductCartSession(params).then((res) => {
+        if (res !== undefined) {
+          this.$message({
+            message: 'Thêm sản phẩm vào giỏ hàng thành công',
+            type: 'success'
+          });
+          this.products[index].quantity++
+        } else {
+          this.$message({
+            message: 'Thêm sản phẩm thất bại',
+            type: 'error'
+          });
+        }
+      }).catch((err) => {
+        this.$message({
+          message: err,
+          type: 'success'
+        });
+      })
+    },
+    async handleReductionProduct(product, index) {
+      const sessionKey = getSessionCart()
+      const params = {
+        cartId : sessionKey,
+        productId : product.product.id,
+        quantity: product.quantity
+      }
+      await this.apiRemoveProductCartSession(params).then((res) => {
+        if (res !== undefined) {
+          this.products[index].quantity--
+        } else {
+          this.$message({
+            message: 'Thay đổi số lượng sản phẩm thất bại',
+            type: 'error'
+          });
+        }
+      }).catch((err) => {
+        this.$message({
+          message: err,
+          type: 'success'
+        });
+      })
+    },
+    totalProductBuy() {
+      let total = 0
+      this.productsBuy.forEach((item) => {
+        total += item.quantity*item.product?.productVariants[0]?.price
+      })
+
+      return total
+    },
+
     removeProductBuy(index) {
+      const indexDelete = this.productsBuy.findIndex(item => item.indexList === index);
+      // console.log(indexDelete, 'index xoa')
+      this.productsBuy.splice(indexDelete, 1);
     },
     changeInfoPayment() {
       this.showDialogLocation = true
@@ -175,7 +275,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.locationForm?.resetForm();
       });
-    }
+    },
+    formatValue(value) {
+      return formatPrice(value)
+    },
   },
   created() {
     this.getListProduct()
