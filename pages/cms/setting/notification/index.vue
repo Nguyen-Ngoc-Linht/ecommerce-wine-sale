@@ -6,14 +6,14 @@
           <div class="d-flex align-items-center">
             <img src="~/assets/img/logo.png" alt="Avatar" class="avatar-lg">
             <div class="d-flex flex-column ms-3">
-              <h4 class="mb-1 text-primary text-gradient">Danh sách sản phẩm</h4>
-              <span class="mb-0 text-gradient text-danger">Chi tiết danh sách sản phẩm hệ thống cửa hàng</span>
+              <h4 class="mb-1 text-primary text-gradient">Danh sách thông báo</h4>
+              <span class="mb-0 text-gradient text-danger">Chi tiết danh sách thông báo của hệ thống cửa hàng</span>
             </div>
           </div>
           <div class="d-flex align-items-center cursor-pointer me-3">
-            <button @click="handleAddProduct" class="btn btn-outline-primary">
+            <button @click="handleAddNotification" class="btn btn-outline-primary">
               <i class="ni ni-fat-add"></i>
-              <span class="ms-2">Thêm sản phẩm</span>
+              <span class="ms-2">Bắn thông báo</span>
             </button>
           </div>
         </div>
@@ -65,30 +65,30 @@ export default {
   layout: 'cms',
   data() {
     return {
-      products: [],
+      notifications: [],
       fields: [
         {
-          label: 'Tên sản phẩm',
+          label: 'Người tạo',
           prop: 'name',
         },
         {
-          label: 'Mô tả',
+          label: 'Nội dung thông báo',
           prop: 'description',
         },
         {
-          label: 'Giá',
+          label: 'Kênh gửi tin',
           prop: 'price',
         },
         {
-          label: 'Thuộc tính',
+          label: 'Loại tin',
           prop: 'category',
         },
         {
-          label: 'Ảnh sản phẩm',
+          label: 'Ngày tạo',
           prop: 'image',
         },
         {
-          label: 'Lượt xem',
+          label: 'Trạng thái',
           prop: 'viewCount',
         },
         {
@@ -96,14 +96,14 @@ export default {
           prop: 'operation'
         },
       ],
-      infoProduct: {},
+      infoNotification: {},
       showDialogDelete: false
     }
   },
   methods: {
-    ...mapActions('product', {
-      apiGetAllProducts: 'apiGetAllProducts',
-      apiDeleteProduct: 'apiDeleteProduct',
+    ...mapActions('notification', {
+      apiGetAllNotifications: 'apiGetAllNotification',
+      // apiDeleteProduct: 'apiDeleteProduct',
     }),
     async getList() {
       try {
@@ -113,18 +113,18 @@ export default {
             size : 10
           }
         }
-        await this.apiGetAllProducts(params).then((res) => {
+        await this.apiGetAllNotifications(params).then((res) => {
           this.products = res.data.content
         })
       } catch (e) {
         console.log(e)
       }
     },
-    handleAddProduct() {
-      this.$router.push('/cms/quan-ly-san-pham/add')
+    handleAddNotification() {
+      this.$router.push('/cms/setting/notification/add')
     },
     handleEditProduct(data) {
-      this.$router.push(`/cms/quan-ly-san-pham/edit/${data.id}`)
+      this.$router.push(`/cms/setting/notification/edit/${data.id}`)
     },
     openDialogDelete(data) {
       this.infoProduct = data
