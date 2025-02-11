@@ -26,13 +26,60 @@ const actions = {
       console.log(e)
     }
   },
+
+  async apiSignInWithGoogle({ commit, state }, payload) {
+    try {
+      let { data } = await this.$axios.get(`${API_AUTH.apiSignInWithGoogle}`, {
+        headers: {
+          'Accept-Language': 'vi'
+        }
+      })
+      return data
+    } catch (e) {
+      console.log(e)
+    }
+  },
+
+  async apiHandleGoogleCallback({ commit }, code) {
+    try {
+      let { data } = await this.$axios.get(`${API_AUTH.apiGoogleCallback}`, {
+        params: { code },
+        headers: { 'Accept-Language': 'vi' }
+      });
+
+      if (data.code === 200) {
+        setAccessToken(data.data.token);
+        const user = {
+          id: data.data.userId,
+          name: data.data.firstName + data.data.lastName,
+          email: data.data.email,
+          phone: data.data.phoneNumber,
+        };
+        setUserInfo(user);
+        commit("UPDATE_USER", user);
+        return data;
+      }
+    } catch (e) {
+      console.log("Lỗi xử lý callback Google:", e);
+    }
+  }
 };
 
-const state = () => ({});
+const state = () => ({
+  user: [],
+});
 
-const getters = {};
+const getters = {
+  user(state) {
+    return state.user
+  }
+};
 
-const mutations = {};
+const mutations = {
+  UPDATE_USER(state, payload) {
+    state.user = payload;
+  }
+};
 
 export default {
   actions,

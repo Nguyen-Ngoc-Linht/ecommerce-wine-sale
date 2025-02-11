@@ -14,13 +14,18 @@
         </el-form>
 
         <button @click="handleLogin" class="btn bg-gradient-success">Đăng nhập</button>
+
+        <button @click="handleLoginWithGoogle" class="btn bg-gradient-danger">
+          <i class="fab fa-google"></i>  Đăng nhập với Google
+        </button>
+      </div>
       </div>
     </div>
-  </div>
+<!--  </div>-->
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import {mapActions, mapGetters, mapState} from "vuex";
 
 export default {
   layout: 'empty',
@@ -36,6 +41,7 @@ export default {
   methods: {
     ...mapActions('auth', {
       apiSignIn: 'apiSignIn',
+      apiSignInWithGoogle: 'apiSignInWithGoogle',
     }),
     async handleLogin() {
       try {
@@ -48,7 +54,52 @@ export default {
           this.$router.push('/cms')
         })
       } catch (e) {}
+    },
+
+    // async handleLoginWithGoogle() {
+    //   try {
+    //     await this.apiSignInWithGoogle().then(res => {
+    //       console.log(res)
+    //       // this.$router.push(res)
+    //       window.open(res, "GoogleLogin", "width=500,height=600,left=100,top=100")
+    //     })
+    //   } catch (e) {}
+    // }
+    async handleLoginWithGoogle() {
+      try {
+        const res = await this.apiSignInWithGoogle();
+        console.log("Google Login URL:", res);
+
+        const popup = window.open(res, "GoogleLogin", "width=500,height=600,left=100,top=100");
+
+        // 🟢 Lắng nghe phản hồi từ popup
+        window.addEventListener("message", (event) => {
+          console.log("Nhận dữ liệu từ popup:", event.data); // ✅ Kiểm tra message nhận về
+
+          if (event.origin !== window.location.origin) return;
+
+          const { success, token } = event.data;
+          if (success && token) {
+            localStorage.setItem("authToken", token);
+            console.log("Lưu token vào localStorage:", token);
+
+            // 🟢 Đóng popup nếu chưa đóng
+            if (popup && !popup.closed) {
+              popup.close();
+              console.log("Popup đóng chưa?", popup.closed);
+            }
+
+            // 🟢 Chuyển hướng đến dashboard
+            this.$router.push("/okehaha");
+          }
+        }, false);
+      } catch (e) {
+        console.error("Google login error:", e);
+      }
     }
+  },
+  computed: {
+    ...mapGetters('auth', ['user'])
   },
   created() {
   }
