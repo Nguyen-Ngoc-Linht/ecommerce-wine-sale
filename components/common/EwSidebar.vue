@@ -16,7 +16,7 @@
           exact-active-class="activate-sidebar"
         >
           <div class="bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center icon-tab">
-            <i class="text-sm opacity-10 ni ni-folder-17 text-secondary" aria-hidden="true"></i>
+            <i class="text-sm opacity-10 ni text-secondary" :class="tab.icon" aria-hidden="true"></i>
           </div>
           <span class="nav-link-text" :class="false ? ' me-1' : 'ms-1'">{{ tab.name }}</span>
         </nuxt-link>
@@ -24,17 +24,16 @@
           <div
             class="nav-link-sidebar"
             data-bs-toggle="collapse"
-            data-bs-target="#listStudent"
-            aria-controls="listStudent"
-            aria-expanded="false"
-            aria-label="Toggle listStudent"
+            :data-bs-target="`#listStudent${tab.id}`"
+            :aria-controls="`listStudent${tab.id}`"
+            aria-expanded="true"
           >
             <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center icon-tab">
-              <i class="text-sm opacity-10 ni ni-folder-17 text-secondary" aria-hidden="true"></i>
+              <i class="text-sm opacity-10 ni text-secondary" :class="tab.icon" aria-hidden="true"></i>
             </div>
             <span class="nav-link-text">{{ tab.name }}</span>
           </div>
-          <div class="collapse py-2" id="listStudent">
+          <div class="collapse py-2" :id="`listStudent${tab.id}`">
             <ul class="navbar-nav mx-auto">
               <li v-for="item in tab.children" class="mt-1">
                 <NuxtLink
@@ -44,7 +43,7 @@
                   active-class="activate-sidebar"
                 >
                   <div class="text-center bg-white shadow icon icon-sm border-radius-md d-flex align-items-center justify-content-center icon-tab">
-                    <i class="text-sm opacity-10 ni ni-bag-17 text-secondary" aria-hidden="true"></i>
+                    <i class="text-sm opacity-10 ni text-secondary" :class="tab.icon" aria-hidden="true"></i>
                   </div>
                   <span class="nav-link-text ms-2">{{ item.name }}</span>
                 </NuxtLink>

@@ -23,7 +23,7 @@ const state = () => ({
     },
     {
       id: '3',
-      icon: 'user',
+      icon: 'ni-circle-08',
       name: 'Quản lý người dùng',
       path: '/cms/quan-ly-nguoi-dung',
       permission: '',
@@ -50,6 +50,60 @@ const state = () => ({
           id: '4-2',
           icon: 'thuoctinh',
           name: 'Quản lý thuộc tính',
+          path: '/cms/quan-ly-thuoc-tinh',
+          permission: '',
+          children: [
+          ]
+        },
+      ]
+    },
+    {
+      id: '5',
+      icon: 'report',
+      name: 'Báo cáo thống kê',
+      path: '/cms/bao-cao',
+      permission: '',
+      children: [
+        {
+          id: '5-1',
+          icon: 'report',
+          name: 'Báo cáo 1',
+          path: '/cms/quan-ly-san-pham',
+          permission: '',
+          children: [
+          ]
+        },
+        {
+          id: '5-2',
+          icon: 'report',
+          name: 'Báo cáo 2',
+          path: '/cms/quan-ly-thuoc-tinh',
+          permission: '',
+          children: [
+          ]
+        },
+      ]
+    },
+    {
+      id: '6',
+      icon: 'notification',
+      name: 'Cài đặt chung',
+      path: '/cms/quan-ly-thong-bao',
+      permission: '',
+      children: [
+        {
+          id: '6-1',
+          icon: 'report',
+          name: 'Danh sách thông báo',
+          path: '/cms/setting/notification',
+          permission: '',
+          children: [
+          ]
+        },
+        {
+          id: '6-2',
+          icon: 'report',
+          name: 'Giới thiệu',
           path: '/cms/quan-ly-thuoc-tinh',
           permission: '',
           children: [
