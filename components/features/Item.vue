@@ -133,11 +133,16 @@ export default {
         const params = {
           cartId : sessionKey,
           productId : this.infoItem.id,
-          product : this.infoItem,
+          product : {
+            id: this.infoItem.id,
+            name: this.infoItem.name,
+            description: this.infoItem.description,
+            url: this.infoItem.images[0].url
+          },
           variant: {
             id: this.variant.id
           },
-          quantity : 1
+          quantity: 1
         }
         await this.apiAddProductCartSession(params).then((res) => {
           console.log(res)

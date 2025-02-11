@@ -6,23 +6,15 @@
     </div>
     <div class="info-card ms-3">
       <div class="title-product">
-        <h6 class="mb-0">{{ infoCard.product?.name }}</h6>
+        <h6 class="mb-0 text-sm">{{ infoCard.product?.name }}</h6>
         <span class="bg-gradient bg-light px-2 py-1 rounded-2 text-black font-weight-bold text-sm">
             {{ infoCard.product?.category?.name}}
         </span>
         <div class="d-flex align-items-center mt-2 gap-1">
-          <div class="bg-light icon-action cursor-pointer" @click="reductionProduct">
-            <i class="el-icon-minus"></i>
-          </div>
-          <div class="bg-light icon-action">
-            <span class="text-sm">{{ infoCard.quantity }}</span>
-          </div>
-          <div class="bg-light icon-action cursor-pointer" @click="increaseProduct">
-            <i class="el-icon-plus"></i>
-          </div>
+          <span class="text-sm text-bold">Số lượng: {{ infoCard.quantity }}</span>
         </div>
       </div>
-      <h5 class="text-danger">{{ formatValue(infoCard.product?.productVariants[0]?.price * infoCard.quantity) }}</h5>
+      <h6 class="text-danger text-sm">{{ formatValue(infoCard.product?.productVariants[0]?.price * infoCard.quantity) }}</h6>
     </div>
   </div>
 </template>
@@ -46,13 +38,6 @@ export default {
   methods: {
     formatValue(value) {
       return formatPrice(value)
-    },
-    increaseProduct() {
-      console.log('hay')
-      this.$emit('increaseProduct')
-    },
-    reductionProduct() {
-      this.$emit('reductionProduct')
     }
   },
   created() {
@@ -64,8 +49,8 @@ export default {
 
 <style scoped lang="scss">
 .image-product {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
 }
 
 .info-card {
@@ -77,14 +62,5 @@ export default {
   .title-product {
     flex: 1;
   }
-}
-
-.icon-action {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 2.4px;
 }
 </style>

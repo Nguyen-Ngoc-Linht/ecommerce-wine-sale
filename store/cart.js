@@ -41,7 +41,9 @@ const actions = {
   },
   async apiRemoveProductCartSession({commit, state}, payload) {
     try {
-      let { data } = await this.$axios.delete(`${API_CART.apiCartSessionRemove}`, payload)
+      let { data } = await this.$axios.delete(`${API_CART.apiCartSessionRemove}`, {
+        data: payload
+      })
 
       if (data.status === 200) {
         return data
