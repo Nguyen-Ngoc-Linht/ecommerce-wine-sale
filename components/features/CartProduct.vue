@@ -2,7 +2,12 @@
   <div class="d-flex h-100 w-100">
     <slot name="checkbox"></slot>
     <div class="image-product">
-      <img :src="baseUrl + infoCard.product?.images[0].url.replace(/^\.\/uploads/, '/uploads')" alt="" class="w-100 h-100" style="object-fit: cover">
+      <img
+        :src="`${baseUrl}${infoCard.product.images[0]?.url ? infoCard.product.images[0].url?.replace(/^\.\/uploads/, '/uploads') : ''}`"
+        alt=""
+        class="w-100 h-100"
+        style="object-fit: cover"
+      >
     </div>
     <div class="info-card ms-3">
       <div class="title-product">

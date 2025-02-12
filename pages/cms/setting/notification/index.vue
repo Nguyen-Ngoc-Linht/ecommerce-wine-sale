@@ -22,35 +22,32 @@
     <div class="mt-3 bg-white p-3 rounded-2">
       <ew-table
         :fields="fields"
-        :data="products"
+        :data="notifications"
         :STT="true"
-        :page="1"
-        :size="10"
+        :page="currentPage"
+        :size="pageSize"
       >
-        <template #category="{ row }">
-          <span>{{ row.category.name }}</span>
-        </template>
-        <template #operation="{ row }">
-          <div>
-            <img @click="handleEditProduct(row)" src="~/assets/img/icons/pen.svg" alt="Sửa" class="cursor-pointer">
-            <img @click="openDialogDelete(row)" src="~/assets/img/icons/trash.svg" alt="Xóa" class="cursor-pointer">
-          </div>
-        </template>
       </ew-table>
-      <pagination class="mt-2"></pagination>
+      <pagination
+        class="mt-2"
+        :current-page="currentPage"
+        :total="totalItems"
+        :page-size="pageSize"
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
     </div>
+    <!-- Popup Gửi thông báo -->
+    <el-dialog :visible.sync="isPopupVisible" title="Gửi thông báo">
+      <p>Nhập nội dung thông báo của bạn:</p>
+      <el-input v-model="message" placeholder="Nhập nội dung..." />
 
-    <el-dialog
-      title="Xóa sản phẩm"
-      :visible.sync="showDialogDelete"
-      width="500px"
-    >
-      <div>
-        <div class="mt-2 d-flex justify-content-end gap-2">
-          <button @click="showDialogDelete = false" class="btn bg-gradient-secondary">Hủy</button>
-          <button @click="handleDeleteProduct" class="btn bg-gradient-primary">Xác nhận</button>
-        </div>
-      </div>
+      <template #footer>
+        <span>
+          <el-button @click="isPopupVisible = false">Hủy</el-button>
+          <el-button type="primary" @click="sendNotification">Gửi</el-button>
+        </span>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -69,82 +66,86 @@ export default {
       fields: [
         {
           label: 'Người tạo',
-          prop: 'name',
+          prop: 'createdBy',
         },
         {
           label: 'Nội dung thông báo',
-          prop: 'description',
+          prop: 'content',
         },
         {
           label: 'Kênh gửi tin',
-          prop: 'price',
+          prop: 'channel',
         },
         {
           label: 'Loại tin',
-          prop: 'category',
+          prop: 'type',
         },
         {
           label: 'Ngày tạo',
-          prop: 'image',
+          prop: 'createdDate',
         },
         {
           label: 'Trạng thái',
-          prop: 'viewCount',
-        },
-        {
-          label: 'Thao tác',
-          prop: 'operation'
+          prop: 'status',
         },
       ],
+      currentPage: 1,
+      pageSize: 10,
+      totalItems: 0,
       infoNotification: {},
+      message: "",
+      isPopupVisible: false,
       showDialogDelete: false
     }
   },
   methods: {
     ...mapActions('notification', {
       apiGetAllNotifications: 'apiGetAllNotification',
-      // apiDeleteProduct: 'apiDeleteProduct',
     }),
     async getList() {
       try {
         const params = {
-          paged : {
-            page : 1,
-            size : 10
-          }
-        }
+          paged: {
+            page: this.currentPage,
+            size: this.pageSize,
+          },
+        };
         await this.apiGetAllNotifications(params).then((res) => {
-          this.products = res.data.content
+          this.notifications = res.data.content,
+          this.totalItems = res.data.totalElements;
         })
       } catch (e) {
         console.log(e)
       }
     },
+    onPageChange(page) {
+      this.currentPage = page;
+      this.getList();
+    },
+    async onSizeChange(newSize) {
+      this.pageSize = newSize;
+      this.currentPage = 1;  // Reset về trang đầu tiên
+      await this.getList();
+    },
     handleAddNotification() {
-      this.$router.push('/cms/setting/notification/add')
+      this.isPopupVisible = true;
+      console.log("isPopupVisible:", this.isPopupVisible); // Kiểm tra xem biến có đổi không
     },
-    handleEditProduct(data) {
-      this.$router.push(`/cms/setting/notification/edit/${data.id}`)
-    },
-    openDialogDelete(data) {
-      this.infoProduct = data
-      this.showDialogDelete = true
-    },
-    async handleDeleteProduct() {
-      await this.apiDeleteProduct(this.infoProduct.id).then(res => {
-        if (res !== undefined) {
-          this.$message.success('Xóa sản phẩm thành công')
-          this.getList()
-          this.showDialogDelete = false
-        } else {
-          this.showDialogDelete = false
-          this.$message.error('Xóa sản phẩm không thành công')
-        }
-      })
+    sendNotification() {
+      console.log("Gửi thông báo:", this.message);
+      this.isPopupVisible = false; // Close popup after sending
     }
   },
   created() {
     this.getList()
-  }
+  },
 }
 </script>
+<style lang="scss" scoped>
+.el-dialog {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+</style>

@@ -4,8 +4,8 @@ import {API_NOTIFICATION} from "~/api/notification";
 const actions = {
   async apiGetAllNotification({commit, state}, payload) {
     try {
-      // let {data} = await this.$axios.post(`${API_NOTIFICATION.apiNotification}/find-all`, payload)
-      let {data} = await this.$axios.post("http://localhost:8007/api/v1.0/notifications/find-all", payload)
+      let {data} = await this.$axios.post(`${API_NOTIFICATION.apiNotification}/find-all`, payload)
+      // let {data} = await this.$axios.post("http://localhost:8007/api/v1.0/notifications/find-all", payload)
       if (data.code === CONSTANTS.SUCCESS) {
         return data
       }
