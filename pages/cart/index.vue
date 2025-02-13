@@ -1,6 +1,6 @@
 <template>
   <div class="w-100" :style="backgroundStyle">
-    <div class="container">
+    <div v-if="!isLoading" v-loading="isLoading" class="container">
       <div class="w-100 d-flex align-items-center py-3">
         <div class="back-home"></div>
         <h5 class="text-primary mb-0">Giỏ hàng</h5>
@@ -143,6 +143,7 @@ export default {
 
       showDialogLocation: false,
       showAddLocation: false,
+      isLoading: false,
     }
   },
   computed: {
@@ -165,11 +166,15 @@ export default {
     }),
     async getListProduct() {
       try {
+        this.isLoading = true
         await this.apiGetCartSessionKey().then((res) => {
           // console.log(res.cartItems)
           this.products = res.cartItems
         })
+        setTimeout(() => {}, 5000)
+        this.isLoading = false
       } catch (e) {
+        this.isLoading = false
         console.log(e)
       }
     },

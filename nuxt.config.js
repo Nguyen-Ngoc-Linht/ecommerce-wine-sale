@@ -79,6 +79,21 @@ export default {
     host: "localhost",
   },
 
+  router: {
+    scrollBehavior(to, from, savedPosition) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (process.client) {
+            // Cuộn toàn bộ trang
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+          }
+          resolve({ x: 0, y: 0 });
+        }, 10);
+      });
+    },
+  },
+
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 };

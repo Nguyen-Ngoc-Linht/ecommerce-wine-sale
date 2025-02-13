@@ -17,7 +17,7 @@
                 <img src="~/assets/img/home/CreditCard.svg" alt="">
               </el-tooltip>
             </div>
-            <div class="tab-action">
+            <div @click="viewProduct" class="tab-action">
               <el-tooltip effect="dark" content="Xem chi tiết" placement="top">
                 <img src="~/assets/img/home/Eye.svg" alt="">
               </el-tooltip>
@@ -163,10 +163,13 @@ export default {
         console.log(e)
       }
     },
+    viewProduct() {
+      this.$router.push(`/product/detail/${this.infoItem.id}`)
+    },
     setVariantProduct(index) {
       this.isVariantActive = index
       this.variant = this.infoItem.productVariants[index]
-    }
+    },
   },
   created() {
     this.baseUrl = DEV_BASE_URL_API + 'media-service/api/v1.0/images'
