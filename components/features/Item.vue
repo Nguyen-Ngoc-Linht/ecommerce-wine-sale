@@ -54,7 +54,7 @@
             </div>
             <div class="info-variant d-flex flex-column ms-3 w-100">
               <h6 class="mb-1">{{ infoItem.name }}</h6>
-              <h5 class="text-danger mb-1">{{ variant.price }}</h5>
+              <h5 class="text-danger mb-1">{{ formatPrice(variant.price) }}</h5>
               <span>Hàng trong kho: {{ variant.quantity }}</span>
             </div>
           </div>
