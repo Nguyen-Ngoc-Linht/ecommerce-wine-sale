@@ -45,17 +45,15 @@ export default {
     if (sessionKey === null || sessionKey === undefined) {
       this.setSessionKey()
     }
-  }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .page-wrapper {
   min-height: 100vh;
-  max-height: 100vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  left: 0;
+  transition: all .25s;
   position: relative;
 }
 </style>

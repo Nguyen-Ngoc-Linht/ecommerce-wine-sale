@@ -6,12 +6,7 @@
           <img src="~/assets/img/icons/logo.webp" alt="goc_ruou_vang">
         </div>
         <el-input v-model="search_text" class="w-50" placeholder="Hãy thử 'Vang cá chép' xem sao"></el-input>
-        <div class="info-user">
-          <nuxt-link to="/cart">
-            <img src="~/assets/img/icons/cart.svg" alt="Giỏ hàng" class="cursor-pointer">
-          </nuxt-link>
-          <nuxt-link to="/auth/login" class="ms-3 text-white">Đăng nhập</nuxt-link>
-        </div>
+        <div></div>
       </div>
     </div>
   </header>
