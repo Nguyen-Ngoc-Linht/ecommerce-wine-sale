@@ -58,6 +58,17 @@
             <div @click="navigationCart()">
               <img src="~/assets/img/icons/cart.svg" alt="Giỏ hàng" class="cursor-pointer">
             </div>
+            <div @click="navigationCart()" class="ms-3 position-relative">
+              <img
+                src="~/assets/img/icons/bell.svg"
+                alt="Thông báo"
+                style="width: 40px; height: 40px;"
+                class="cursor-pointer"
+              >
+              <div class="number-noti">
+                <span class="text-sm text-danger mb-0">1</span>
+              </div>
+            </div>
             <nuxt-link to="/auth/login" class="ms-3 text-white">Đăng nhập</nuxt-link>
           </div>
         </div>
@@ -89,5 +100,19 @@ export default {
 
 .active-link {
   color: white !important;
+}
+
+.number-noti {
+  position: absolute;
+  padding: 2px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: -6px;
+  right: 0px;
 }
 </style>
