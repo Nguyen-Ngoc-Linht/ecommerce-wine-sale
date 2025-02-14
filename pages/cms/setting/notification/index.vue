@@ -39,14 +39,38 @@
     </div>
     <!-- Popup Gửi thông báo -->
     <el-dialog :visible.sync="isPopupVisible" title="Gửi thông báo">
-      <p>Nhập nội dung thông báo của bạn:</p>
+      <p>Chọn loại thông báo:</p>
+      <el-select v-model="notificationType" placeholder="Chọn loại">
+        <el-option label="Cảnh báo" value="warning" />
+        <el-option label="Thông báo" value="notice" />
+        <el-option label="Khẩn cấp" value="urgent" />
+      </el-select>
+
+      <p class="mt-3">Chọn đối tượng nhận thông báo
+        :</p>
+      <el-select
+        v-model="selectedPeople"
+        multiple
+        filterable
+        remote
+        placeholder="Chọn người nhận"
+        class="container-name">
+        <el-option
+          v-for="person in people"
+          :key="person.id"
+          :label="person.name"
+          :value="person.id"
+        />
+      </el-select>
+
+      <p class="mt-3">Nhập nội dung thông báo:</p>
       <el-input v-model="message" placeholder="Nhập nội dung..." />
 
       <template #footer>
-        <span>
-          <el-button @click="isPopupVisible = false">Hủy</el-button>
-          <el-button type="primary" @click="sendNotification">Gửi</el-button>
-        </span>
+    <span>
+      <el-button @click="isPopupVisible = false">Hủy</el-button>
+      <el-button type="primary" @click="sendNotification">Gửi</el-button>
+    </span>
       </template>
     </el-dialog>
   </div>
@@ -95,12 +119,19 @@ export default {
       infoNotification: {},
       message: "",
       isPopupVisible: false,
-      showDialogDelete: false
+      showDialogDelete: false,
+      notificationType: '', // Loại thông báo
+      selectedPeople: [],
+      people: [],
+      filteredPeople: []
     }
   },
   methods: {
     ...mapActions('notification', {
-      apiGetAllNotifications: 'apiGetAllNotification',
+      apiGetAllNotifications: 'apiGetAllNotification'
+    }),
+    ...mapActions('user', {
+      apiGetListUsers: 'apiGetListUser'
     }),
     async getList() {
       try {
@@ -132,12 +163,28 @@ export default {
       console.log("isPopupVisible:", this.isPopupVisible); // Kiểm tra xem biến có đổi không
     },
     sendNotification() {
-      console.log("Gửi thông báo:", this.message);
-      this.isPopupVisible = false; // Close popup after sending
+      if (!this.notificationType || !this.message || this.selectedPeople.length === 0) {
+        this.$message.warning('Vui lòng chọn loại, người nhận và nhập nội dung.');
+        return;
+      }
+
+      // Giả lập gửi thông báo
+      console.log('Loại thông báo:', this.notificationType);
+      console.log('Người nhận:', this.selectedPeople);
+      console.log('Nội dung:', this.message);
+
+      this.$message.success('Thông báo đã được gửi!');
+      this.isPopupVisible = false;
+
+      // Reset dữ liệu
+      this.notificationType = '';
+      this.message = '';
+      this.selectedPeople = [];
     }
   },
   created() {
-    this.getList()
+    this.getList(),
+    this.filteredPeople = this.people;
   },
 }
 </script>
@@ -148,4 +195,8 @@ export default {
   visibility: visible !important;
 }
 
+.container-name {
+  display: flex;
+  flex-direction: row;
+}
 </style>
