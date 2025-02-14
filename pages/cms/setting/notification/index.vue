@@ -39,15 +39,19 @@
     </div>
     <!-- Popup Gửi thông báo -->
     <el-dialog :visible.sync="isPopupVisible" title="Gửi thông báo">
-      <p>Chọn loại thông báo:</p>
+      <p>
+        Chọn loại thông báo
+        <span style="color: red;">*</span>
+      </p>
       <el-select v-model="notificationType" placeholder="Chọn loại">
-        <el-option label="Cảnh báo" value="warning" />
-        <el-option label="Thông báo" value="notice" />
-        <el-option label="Khẩn cấp" value="urgent" />
+        <el-option label="Thông báo hệ thống" value="notice" />
+        <el-option label="Cảnh báo hệ thống" value="warning" />
       </el-select>
 
-      <p class="mt-3">Chọn đối tượng nhận thông báo
-        :</p>
+      <p class="mt-3">
+        Chọn đối tượng nhận thông báo
+        <span style="color: red;">*</span>
+      </p>
       <el-select
         v-model="selectedPeople"
         multiple
@@ -56,20 +60,40 @@
         placeholder="Chọn người nhận"
         class="container-name">
         <el-option
-          v-for="person in people"
+          v-for="person in peopleOptions"
           :key="person.id"
-          :label="person.name"
+          :label="person.lastName"
           :value="person.id"
         />
       </el-select>
 
-      <p class="mt-3">Nhập nội dung thông báo:</p>
+      <p class="mt-3">
+        Nhập nội dung thông báo
+        <span style="color: red;">*</span>
+      </p>
       <el-input v-model="message" placeholder="Nhập nội dung..." />
 
       <template #footer>
     <span>
       <el-button @click="isPopupVisible = false">Hủy</el-button>
-      <el-button type="primary" @click="sendNotification">Gửi</el-button>
+      <el-button type="primary" @click="confirmSend">Gửi</el-button>
+    </span>
+      </template>
+    </el-dialog>
+
+    <!-- Confirmation Dialog -->
+    <el-dialog
+      :visible.sync="isConfirmPopupVisible"
+      title="Xác nhận"
+      width="30%"
+      center
+      :modal="true"
+    >
+      <p>Bạn có chắc chắn muốn gửi thông báo này không?</p>
+      <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="isConfirmPopupVisible = false">Hủy</el-button>
+      <el-button type="primary" @click="sendNotification">Xác nhận</el-button>
     </span>
       </template>
     </el-dialog>
@@ -119,12 +143,20 @@ export default {
       infoNotification: {},
       message: "",
       isPopupVisible: false,
-      showDialogDelete: false,
-      notificationType: '', // Loại thông báo
+      notificationType: 'notice',
       selectedPeople: [],
       people: [],
-      filteredPeople: []
+      filteredPeople: [],
+      isConfirmPopupVisible: false
     }
+  },
+  computed: {
+    peopleOptions() {
+      return [
+        { id: 'all', lastName: 'Tất cả' },
+        ...this.people
+      ];
+    },
   },
   methods: {
     ...mapActions('notification', {
@@ -162,13 +194,36 @@ export default {
       this.isPopupVisible = true;
       console.log("isPopupVisible:", this.isPopupVisible); // Kiểm tra xem biến có đổi không
     },
-    sendNotification() {
-      if (!this.notificationType || !this.message || this.selectedPeople.length === 0) {
-        this.$message.warning('Vui lòng chọn loại, người nhận và nhập nội dung.');
+    async getListUser() {
+      try {
+        const params = {
+          name: null,
+          email: null,
+          phone: null,
+        };
+        await this.apiGetListUsers(params).then((res) => {
+          this.people = res.data
+        })
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    confirmSend() {
+      if (!this.notificationType) {
+        this.$message.warning('Vui lòng chọn loại thông báo.');
         return;
       }
-
-      // Giả lập gửi thông báo
+      if (this.selectedPeople.length === 0) {
+        this.$message.warning('Vui lòng chọn người nhận thông báo.');
+        return;
+      }
+      if (!this.message) {
+        this.$message.warning('Vui lòng nhập nội dung gửi tin.');
+        return;
+      }
+      this.isConfirmPopupVisible = true;
+    },
+    sendNotification() {
       console.log('Loại thông báo:', this.notificationType);
       console.log('Người nhận:', this.selectedPeople);
       console.log('Nội dung:', this.message);
@@ -180,10 +235,12 @@ export default {
       this.notificationType = '';
       this.message = '';
       this.selectedPeople = [];
+      this.isConfirmPopupVisible = false;
     }
   },
   created() {
     this.getList(),
+    this.getListUser(),
     this.filteredPeople = this.people;
   },
 }
