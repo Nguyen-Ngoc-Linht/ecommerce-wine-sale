@@ -66,7 +66,7 @@
                 class="cursor-pointer"
               >
               <div class="number-noti">
-                <span class="text-sm text-danger mb-0">1</span>
+                <span class="text-sm text-danger mb-0">{{ notificationCount }}</span>
               </div>
             </div>
             <nuxt-link to="/auth/login" class="ms-3 text-white">Đăng nhập</nuxt-link>
@@ -80,7 +80,9 @@
 <script>
 export default {
   data() {
-    return {}
+    return {
+      notificationCount: 0,
+    }
   },
   methods: {
     async navigationCart() {

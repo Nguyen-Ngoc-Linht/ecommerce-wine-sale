@@ -13,64 +13,33 @@ const actions = {
       console.log(e)
     }
   },
-  // Tạo một sản phẩm
-  // async apiCreateNotification({commit, state}, payload) {
-  //   try {
-  //     let {data} = await this.$axios.post(`${API_NOTIFICATION.apiProduct}`, payload)
-  //
-  //     if (data.code === 201) {
-  //       return data
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // },
-  // async apiGetDetailProduct({commit, state}, id_product) {
-  //   try {
-  //     let {data} = await this.$axios.get(`${API_NOTIFICATION.apiProduct}/${id_product}`);
-  //
-  //     if (data.code === CONSTANTS.SUCCESS) {
-  //       return data
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // },
-  // async apiUpdateProduct({commit, state}, {id_product, payload}) {
-  //   try {
-  //     let {data} = await this.$axios.put(`${API_NOTIFICATION.apiProduct}/${id_product}`, payload)
-  //     if (data.code === CONSTANTS.SUCCESS) {
-  //       return data
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // },
-  // async apiDeleteProduct({commit, state}, id_product) {
-  //   try {
-  //     let { data } = await this.$axios.delete(`${API_NOTIFICATION.apiProduct}/${id_product}`);
-  //
-  //     if (data.code === CONSTANTS.SUCCESS) {
-  //       return data
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
+  addNotification({ commit }, notification) {
+    commit('addNotification', notification);
+  },
+  setNotifications({ commit }, notifications) {
+    commit('setNotifications', notifications);
+  },
 };
 
 export const state = () => ({
-  products: []
+  notifications: []
 });
 
 
 const getters = {
   products(state) {
-    return state.products
+    return state.notifications
   }
 };
 
-const mutations = {};
+const mutations = {
+  addNotification(state, data) {
+    state.notifications.push(data)
+  },
+  setNotifications(state, data) {
+    state.notifications = data
+  }
+};
 
 export default {
   actions,

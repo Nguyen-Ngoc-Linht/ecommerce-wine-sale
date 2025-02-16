@@ -58,6 +58,7 @@ export default {
     { src: "~/plugins/element-ui.js", ssr: false },
     { src: "~/plugins/vue-awesome-swiper.js", ssr: false },
     { src: "~/plugins/vue-notification.js", ssr: false },
+    { src: '~/plugins/websocket.js', ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
