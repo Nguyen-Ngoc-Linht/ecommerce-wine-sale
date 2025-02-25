@@ -1,21 +1,29 @@
-const actions = {
-  async apiGetListVideoTop({ commit, state }) {
-    try {
-      let { data } = await this.$axios.get(
-        `https://api-esport.ivyplay.vn/api/esports/videos/top`
-      );
-      return data;
-    } catch (e) {
-      console.log(e);
-    }
+export const actions = {
+  addNotification({ commit }, notification) {
+    commit('addNotification', notification);
   },
 };
 
-const state = () => ({});
+export const state = () => ({
+  user: null,
+  notifications: [],
+});
 
-const getters = {};
 
-const mutations = {};
+export const getters = {
+  notifications(state) {
+    return state.notifications;
+  },
+};
+
+const mutations = {
+  setUser(state, user) {
+    state.user = user;
+  },
+  addNotification(state, notification) {
+    state.notifications.push(notification);
+  },
+};
 
 export default {
   actions,

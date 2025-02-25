@@ -22,35 +22,80 @@
     <div class="mt-3 bg-white p-3 rounded-2">
       <ew-table
         :fields="fields"
-        :data="products"
+        :data="notifications"
         :STT="true"
-        :page="1"
-        :size="10"
+        :page="currentPage"
+        :size="pageSize"
       >
-        <template #category="{ row }">
-          <span>{{ row.category.name }}</span>
-        </template>
-        <template #operation="{ row }">
-          <div>
-            <img @click="handleEditProduct(row)" src="~/assets/img/icons/pen.svg" alt="Sửa" class="cursor-pointer">
-            <img @click="openDialogDelete(row)" src="~/assets/img/icons/trash.svg" alt="Xóa" class="cursor-pointer">
-          </div>
-        </template>
       </ew-table>
-      <pagination class="mt-2"></pagination>
+      <pagination
+        class="mt-2"
+        :current-page="currentPage"
+        :total="totalItems"
+        :page-size="pageSize"
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
     </div>
+    <!-- Popup Gửi thông báo -->
+    <el-dialog :visible.sync="isPopupVisible" title="Gửi thông báo">
+      <p>
+        Chọn loại thông báo
+        <span style="color: red;">*</span>
+      </p>
+      <el-select v-model="notificationType" placeholder="Chọn loại">
+        <el-option label="Thông báo hệ thống" value="notice" />
+        <el-option label="Cảnh báo hệ thống" value="warning" />
+      </el-select>
 
+      <p class="mt-3">
+        Chọn đối tượng nhận thông báo
+        <span style="color: red;">*</span>
+      </p>
+      <el-select
+        v-model="selectedPeople"
+        multiple
+        filterable
+        remote
+        placeholder="Chọn người nhận"
+        class="container-name">
+        <el-option
+          v-for="person in peopleOptions"
+          :key="person.id"
+          :label="person.lastName"
+          :value="person.id"
+        />
+      </el-select>
+
+      <p class="mt-3">
+        Nhập nội dung thông báo
+        <span style="color: red;">*</span>
+      </p>
+      <el-input v-model="message" placeholder="Nhập nội dung..." />
+
+      <template #footer>
+    <span>
+      <el-button @click="isPopupVisible = false">Hủy</el-button>
+      <el-button type="primary" @click="confirmSend">Gửi</el-button>
+    </span>
+      </template>
+    </el-dialog>
+
+    <!-- Confirmation Dialog -->
     <el-dialog
-      title="Xóa sản phẩm"
-      :visible.sync="showDialogDelete"
-      width="500px"
+      :visible.sync="isConfirmPopupVisible"
+      title="Xác nhận"
+      width="30%"
+      center
+      :modal="true"
     >
-      <div>
-        <div class="mt-2 d-flex justify-content-end gap-2">
-          <button @click="showDialogDelete = false" class="btn bg-gradient-secondary">Hủy</button>
-          <button @click="handleDeleteProduct" class="btn bg-gradient-primary">Xác nhận</button>
-        </div>
-      </div>
+      <p>Bạn có chắc chắn muốn gửi thông báo này không?</p>
+      <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="isConfirmPopupVisible = false">Hủy</el-button>
+      <el-button type="primary" @click="sendNotification">Xác nhận</el-button>
+    </span>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -69,82 +114,146 @@ export default {
       fields: [
         {
           label: 'Người tạo',
-          prop: 'name',
+          prop: 'createdBy',
         },
         {
           label: 'Nội dung thông báo',
-          prop: 'description',
+          prop: 'content',
         },
         {
           label: 'Kênh gửi tin',
-          prop: 'price',
+          prop: 'channel',
         },
         {
           label: 'Loại tin',
-          prop: 'category',
+          prop: 'type',
         },
         {
           label: 'Ngày tạo',
-          prop: 'image',
+          prop: 'createdDate',
         },
         {
           label: 'Trạng thái',
-          prop: 'viewCount',
-        },
-        {
-          label: 'Thao tác',
-          prop: 'operation'
+          prop: 'status',
         },
       ],
+      currentPage: 1,
+      pageSize: 10,
+      totalItems: 0,
       infoNotification: {},
-      showDialogDelete: false
+      message: "",
+      isPopupVisible: false,
+      notificationType: 'notice',
+      selectedPeople: [],
+      people: [],
+      filteredPeople: [],
+      isConfirmPopupVisible: false
     }
+  },
+  computed: {
+    peopleOptions() {
+      return [
+        { id: 'all', lastName: 'Tất cả' },
+        ...this.people
+      ];
+    },
   },
   methods: {
     ...mapActions('notification', {
-      apiGetAllNotifications: 'apiGetAllNotification',
-      // apiDeleteProduct: 'apiDeleteProduct',
+      apiGetAllNotifications: 'apiGetAllNotification'
+    }),
+    ...mapActions('user', {
+      apiGetListUsers: 'apiGetListUser'
     }),
     async getList() {
       try {
         const params = {
-          paged : {
-            page : 1,
-            size : 10
-          }
-        }
+          paged: {
+            page: this.currentPage,
+            size: this.pageSize,
+          },
+        };
         await this.apiGetAllNotifications(params).then((res) => {
-          this.products = res.data.content
+          this.notifications = res.data.content,
+          this.totalItems = res.data.totalElements;
         })
       } catch (e) {
         console.log(e)
       }
     },
+    onPageChange(page) {
+      this.currentPage = page;
+      this.getList();
+    },
+    async onSizeChange(newSize) {
+      this.pageSize = newSize;
+      this.currentPage = 1;  // Reset về trang đầu tiên
+      await this.getList();
+    },
     handleAddNotification() {
-      this.$router.push('/cms/setting/notification/add')
+      this.isPopupVisible = true;
+      console.log("isPopupVisible:", this.isPopupVisible); // Kiểm tra xem biến có đổi không
     },
-    handleEditProduct(data) {
-      this.$router.push(`/cms/setting/notification/edit/${data.id}`)
+    async getListUser() {
+      try {
+        const params = {
+          name: null,
+          email: null,
+          phone: null,
+        };
+        await this.apiGetListUsers(params).then((res) => {
+          this.people = res.data
+        })
+      } catch (e) {
+        console.log(e);
+      }
     },
-    openDialogDelete(data) {
-      this.infoProduct = data
-      this.showDialogDelete = true
+    confirmSend() {
+      if (!this.notificationType) {
+        this.$message.warning('Vui lòng chọn loại thông báo.');
+        return;
+      }
+      if (this.selectedPeople.length === 0) {
+        this.$message.warning('Vui lòng chọn người nhận thông báo.');
+        return;
+      }
+      if (!this.message) {
+        this.$message.warning('Vui lòng nhập nội dung gửi tin.');
+        return;
+      }
+      this.isConfirmPopupVisible = true;
     },
-    async handleDeleteProduct() {
-      await this.apiDeleteProduct(this.infoProduct.id).then(res => {
-        if (res !== undefined) {
-          this.$message.success('Xóa sản phẩm thành công')
-          this.getList()
-          this.showDialogDelete = false
-        } else {
-          this.showDialogDelete = false
-          this.$message.error('Xóa sản phẩm không thành công')
-        }
-      })
+    sendNotification() {
+      console.log('Loại thông báo:', this.notificationType);
+      console.log('Người nhận:', this.selectedPeople);
+      console.log('Nội dung:', this.message);
+
+      this.$message.success('Thông báo đã được gửi!');
+      this.isPopupVisible = false;
+
+      // Reset dữ liệu
+      this.notificationType = '';
+      this.message = '';
+      this.selectedPeople = [];
+      this.isConfirmPopupVisible = false;
     }
   },
   created() {
-    this.getList()
-  }
+    this.getList(),
+    this.getListUser(),
+    this.filteredPeople = this.people;
+  },
 }
 </script>
+<style lang="scss" scoped>
+.el-dialog {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.container-name {
+  display: flex;
+  flex-direction: row;
+}
+</style>
