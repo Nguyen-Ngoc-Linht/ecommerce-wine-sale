@@ -39,8 +39,10 @@
     <el-dialog
       :title="'Mua ngay'"
       :visible.sync="showBuyDialog"
+      :width="'1200px'"
+      append-to-body
     >
-      <BuyNow></BuyNow>
+      <BuyNow :product-buy="productBuyNow"></BuyNow>
     </el-dialog>
     <el-dialog
       :title="'Chọn loại sản phẩm'"
@@ -95,6 +97,9 @@ export default {
       isVariantActive: 0,
       baseUrl: '',
       imageLink: '',
+      //
+      isBuyNow: false,
+      productBuyNow: {},
     }
   },
   methods: {
@@ -107,11 +112,24 @@ export default {
       return new Intl.NumberFormat('vi-VN').format(price) + ' đ';
     },
     openDialogBuyNow() {
-      if (this.infoItem.productVariants.length > 0) {
+      if (this.infoItem.productVariants.length > 1) {
         this.showChooseVariant = true
         this.variant = this.infoItem.productVariants[0]
       } else {
+        this.variant = this.infoItem.productVariants[0]
         this.showBuyDialog = true
+        this.productBuyNow = {
+          id: null,
+          product: {
+            category: this.infoItem.category,
+            description: this.infoItem.description,
+            id: this.infoItem.id,
+            images: this.infoItem.images,
+            name: this.infoItem.name,
+            productVariants: [this.variant]
+          },
+          quantity: 1,
+        }
       }
     },
     async addProductCart() {

@@ -36,14 +36,14 @@
                   <h6 class="text-info mb-0">Thông tin thanh toán</h6>
                   <span
                     v-if="isHaveInfoPayment"
-                    @click="changeInfoPayment"
+                    @click.stop="changeInfoPayment"
                     class="text-sm text-secondary cursor-pointer"
                   >
                     Thay đổi
                   </span>
                   <span
                     v-if="!isHaveInfoPayment"
-                    @click="addLocationDefault"
+                    @click.stop="addLocationDefault"
                     class="text-sm text-secondary cursor-pointer"
                   >
                     Thêm thông tin nhận hàng
@@ -68,6 +68,30 @@
                   </div>
                 </div>
               </div>
+              <hr v-if="productsBuy.length > 0"/>
+              <div v-if="productsBuy.length > 0">
+                <h6>Phương thức thanh toán</h6>
+                <div class="d-flex align-items-center">
+                  <el-radio v-model="methodPayment" label="CASH" class="mx-2" disabled>
+                    Thanh toán khi nhận hàng
+                  </el-radio>
+                </div>
+                <div class="d-flex align-items-center my-2">
+                  <el-radio v-model="methodPayment" label="QRCODE" class="mx-2" disabled>
+                    Chuyển khoản qua mã QR code
+                  </el-radio>
+                </div>
+                <h6>Ghi chú cho người bán</h6>
+                <el-input
+                  v-model="note"
+                  type="textarea"
+                  maxlength="1500"
+                  show-word-limit
+                  :autosize="{ minRows: 3, maxRows: 6}"
+                  class="mb-2"
+                ></el-input>
+              </div>
+              <hr v-if="productsBuy.length > 0" class="my-1"/>
               <div v-if="productsBuy.length > 0">
                 <h6>Danh sách sản phẩm mua</h6>
                 <div v-for="(product, index) in productsBuy" :key="`productBuy${index}`">
@@ -88,6 +112,9 @@
                   <p class="mb-0 text-danger text-bold">{{ formatValue(totalProductBuy() + productsBuy.length*30000) }}</p>
                 </div>
               </div>
+              <div v-if="productsBuy.length > 0" class="w-100 mt-3">
+                <button @click.stop="confirmOrder" class="btn w-100 bg-danger text-white">Đặt hàng</button>
+              </div>
             </el-card>
           </el-col>
         </el-row>
@@ -95,12 +122,19 @@
     </div>
 
     <el-dialog
-      :title="'Chọn địa chỉ giao hàng'"
-      :visible.sync="showDialogLocation"
+      :title="'Xác nhận đặt hàng'"
+      :visible.sync="showDialogConfirm"
       width="600px"
+      center
     >
       <template>
-        <ListLocation></ListLocation>
+        <div>
+          <h6>Bạn chắc chắn với những thông tin đặt hàng này?</h6>
+          <div class="d-flex justify-content-end w-100 gap-2">
+            <button @click.stop="showDialogConfirm = false" class="btn bg-gradient-light">Hủy đặt hàng</button>
+            <button @click.stop="handleOrder" class="btn bg-gradient-danger">Xác nhận đặt hàng</button>
+          </div>
+        </div>
       </template>
     </el-dialog>
     <el-dialog
@@ -110,7 +144,7 @@
       width="600px"
     >
       <template>
-        <Location ref="locationForm" @closeDialog="showAddLocation = false" @addLocation="addLocationSuccess"></Location>
+        <Location ref="locationForm" @closeDialog.stop="showAddLocation = false" @addLocation.stop="addLocationSuccess"></Location>
       </template>
     </el-dialog>
   </div>
@@ -136,12 +170,14 @@ export default {
         city: '',
         address: '',
       },
+      note: '',
+      methodPayment: 'QRCODE',
       isHaveInfoPayment: false,
       products: [],
       background_image: 'https://winecellar.vn/wp-content/uploads/2024/12/bg-main-tet-wcl-3.jpg',
       productsBuy: [],
 
-      showDialogLocation: false,
+      showDialogConfirm: false,
       showAddLocation: false,
       isLoading: false,
     }
@@ -267,6 +303,22 @@ export default {
     },
     changeInfoPayment() {
       this.showDialogLocation = true
+    },
+
+    confirmOrder() {
+      if (this.productsBuy.length > 0) {
+        this.showDialogConfirm = true
+      }
+    },
+    async handleOrder() {
+      try {
+        console.log(this.productsBuy, 'day')
+        this.$message.success('Bạn đã đặt hàng thành công')
+        this.showDialogConfirm = false
+        this.productsBuy = []
+      } catch (e) {
+        console.log(e)
+      }
     },
 
     addLocationDefault() {

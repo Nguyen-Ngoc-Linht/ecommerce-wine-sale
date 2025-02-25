@@ -160,6 +160,11 @@ export default {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+.active-link {
+  color: white !important;
+  opacity: 1;
+}
+
 .number-noti {
   position: absolute;
   padding: 2px;

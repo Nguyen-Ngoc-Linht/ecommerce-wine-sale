@@ -15,11 +15,29 @@
       <div class="col-8">
         <div class="card card-body">
           <div class="w-100">
-            <el-carousel :interval="0" arrow="always" style="width: 100%; aspect-ratio: 1.8/1">
+            <el-carousel
+              :interval="0"
+              arrow="always"
+              style="width: 100%; aspect-ratio: 1.8/1"
+              :initial-index="activeIndex"
+              @change="handleSlideChange"
+              ref="carousel"
+            >
               <el-carousel-item v-for="image in listImage" :key="image.id" class="swiper-slide-product">
                 <img :src="image.url" :alt="image.name" class="w-100 image-banner">
               </el-carousel-item>
             </el-carousel>
+
+            <div class="d-flex list-image-preview gap-2 mt-3">
+              <div v-for="(image, index) in listImage" class="img-preview" :class="{'active-image-preview': activeIndex === index}">
+                <img
+                  :src="image.url"
+                  :alt="image.name"
+                  @click="changeSlide(index)"
+                  class="w-100 h-100"
+                >
+              </div>
+            </div>
             <div class="mt-4">
               <h6>Mô tả sản phẩm:</h6>
               <p>{{ infoProduct.description }}</p>
@@ -56,7 +74,7 @@
           <div class="d-flex align-items-center mt-3">
             <span class="text-sm mb-0 me-2">Số lượng:</span>
             <div class="d-flex align-items-center gap-1">
-              <div class="bg-light icon-action cursor-pointer" @click="quantity--">
+              <div class="bg-light icon-action cursor-pointer" @click="quantity > 1 ? quantity-- : 1">
                 <i class="el-icon-minus"></i>
               </div>
               <div class="bg-light icon-action">
@@ -70,15 +88,24 @@
           <hr class="my-3">
           <el-row :gutter="10">
             <el-col :span="12">
-              <button @click="addProductCart" class="btn bg-gradient-secondary w-100">Thêm vào giỏ hàng</button>
+              <button @click.stop="addProductCart" class="btn bg-gradient-secondary w-100">Thêm vào giỏ hàng</button>
             </el-col>
             <el-col :span="12">
-              <button class="btn bg-gradient-danger w-100">Mua ngay</button>
+              <button @click.stop="buyNowProduct" class="btn bg-gradient-danger w-100">Mua ngay</button>
             </el-col>
           </el-row>
         </div>
       </div>
     </div>
+
+    <el-dialog
+      :title="'Mua ngay'"
+      :visible.sync="showBuyDialog"
+      :width="'1200px'"
+      append-to-body
+    >
+      <BuyNow :product-buy="productBuyNow"></BuyNow>
+    </el-dialog>
   </div>
 </template>
 
@@ -88,9 +115,11 @@ import {DEV_BASE_URL_API} from "@/config/axios.env";
 import {slideImagesProduct} from "@/utils/configSwipper";
 import {formatPrice} from "../../../utils/formatData";
 import {getSessionCart} from "@/utils/cookieAuthen";
+import BuyNow from "~/components/features/BuyNow.vue";
 
 export default {
   name: 'ProductDetail',
+  components: {BuyNow},
   data() {
     return {
       infoProduct: {},
@@ -102,6 +131,9 @@ export default {
       baseUrl: '',
       swiperOptions: slideImagesProduct,
       activeVariant: 0,
+      activeIndex: 0,
+      showBuyDialog: false,
+      productBuyNow: {},
     }
   },
   methods: {
@@ -141,6 +173,13 @@ export default {
         })
       })
     },
+    changeSlide(index) {
+      this.activeIndex = index;
+      this.$refs.carousel.setActiveItem(index);
+    },
+    handleSlideChange(index) {
+      this.activeIndex = index;
+    },
     async addProductCart() {
       try {
         const sessionKey = getSessionCart()
@@ -177,8 +216,20 @@ export default {
         console.log(e)
       }
     },
-    buyNow() {
-
+    buyNowProduct() {
+      this.showBuyDialog = true
+      this.productBuyNow = {
+        id: null,
+        product: {
+          category: this.infoProduct.category,
+          description: this.infoProduct.description,
+          id: this.infoProduct.id,
+          images: this.infoProduct.images,
+          name: this.infoProduct.name,
+          productVariants: [this.variantChoose]
+        },
+        quantity: this.quantity,
+      }
     }
   },
   created() {
@@ -200,8 +251,24 @@ export default {
     width: 100%;
     object-fit: contain;
     height: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 }
+
+.img-preview {
+  width: 15%;
+  aspect-ratio: 1/1;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  cursor: pointer;
+
+  &.active-image-preview {
+    border: 1px solid red;
+    scale: 1.1;
+  }
+}
+
 :deep(.el-carousel__container) {
   position: relative;
   height: 100% !important;
