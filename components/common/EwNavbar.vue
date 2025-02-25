@@ -58,6 +58,9 @@
             <div @click="navigationCart()">
               <img src="~/assets/img/icons/cart.svg" alt="Giỏ hàng" class="cursor-pointer">
             </div>
+            <div class="text-center icon d-flex align-items-center justify-content-center">
+              <i class="text-3xl ni ni-bell-55 text-secondary" aria-hidden="true"></i>
+            </div>
             <nuxt-link to="/auth/login" class="ms-3 text-white">Đăng nhập</nuxt-link>
           </div>
         </div>
