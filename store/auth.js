@@ -20,7 +20,7 @@ const actions = {
           phone: data.data.phoneNumber,
         }
         setUserInfo(user)
-        return data
+        return data.data
       }
     } catch (e) {
       console.log(e)

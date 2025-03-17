@@ -6,8 +6,10 @@ export const API_CART = {
   apiCartSessionAdd: `${base_service}/cart-session/add`,
   apiCartSessionRemove: `${base_service}/cart-session/remove`,
 
+  apiHandleCart: `${base_service}/carts/handle-cart`,
   apiCart: `${base_service}/carts`,
   apiCartAdd: `${base_service}/carts/add`,
   apiCartRemove: `${base_service}/carts/remove`,
   apiCartUser: `${base_service}/carts/users`,
+  apiCreateOrder: `${base_service}/orders/add`,
 };

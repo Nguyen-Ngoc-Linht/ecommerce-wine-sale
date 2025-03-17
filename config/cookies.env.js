@@ -11,5 +11,6 @@ module.exports = {
     LoginType: "ecommerce-Wine-Sales-Login-Type",
     LoginCsrfState: "ecommerce-Wine-Sales-Login-Csrf-State",
     SessionCart: 'ecommerce-Wine-Sales-Session-Cart',
+    OrderCart: 'ecommerce-Wine-Sales-OrderCart',
   },
 };

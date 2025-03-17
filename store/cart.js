@@ -63,11 +63,33 @@ const actions = {
       console.log(e)
     }
   },
+
+  async apiHandleCart({commit, state}, payload) {
+    try {
+      let { data } = await this.$axios.post(`${API_CART.apiHandleCart}`, payload)
+
+      if (data.code === 201) {}
+    } catch (e) {
+      console.log(e)
+    }
+  },
+  async apiGetCartUsers({commit, state}, user_id) {
+    try {
+      let { data } = await this.$axios.get(`${API_CART.apiCartUser}/${user_id}`)
+
+      if (data.code === 200) {
+        return data.data
+      }
+      // return data
+    } catch (e) {
+      console.log(e)
+    }
+  },
   async apiAddProductCart({commit, state}, payload) {
     try {
       let { data } = await this.$axios.post(`${API_CART.apiCartAdd}`, payload)
 
-      if (data.status === 200) {
+      if (data.code === 201) {
         return data
       }
     } catch (e) {
@@ -85,18 +107,18 @@ const actions = {
       console.log(e)
     }
   },
-  async apiGetProductCart({commit, state}) {
-    try {
-      const user = JSON.parse(getUserInfo())
-      let { data } = await this.$axios.post(`${API_CART.apiCartUser}/${user.id}`)
 
-      if (data.status === 200) {
-        return data
+  async apiCreateOder({commit, state}, payload) {
+    try {
+      let { data } = await this.$axios.post(`${API_CART.apiCreateOrder}`, payload)
+
+      if (data.code === 201) {
+        return data.data
       }
     } catch (e) {
       console.log(e)
     }
-  },
+  }
 };
 
 const state = () => ({});

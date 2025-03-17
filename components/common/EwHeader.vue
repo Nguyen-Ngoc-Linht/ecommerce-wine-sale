@@ -3,7 +3,7 @@
     <div class="container">
       <div class="w-100 d-flex align-items-center justify-content-between">
         <div class="logo-web">
-          <img src="~/assets/img/icons/logo.webp" alt="goc_ruou_vang">
+          <img src="~/assets/img/logo.png" alt="goc_ruou_vang" style="height: 75px; width: 125px">
         </div>
         <el-input v-model="search_text" class="w-50" placeholder="Hãy thử 'Vang cá chép' xem sao"></el-input>
         <div></div>

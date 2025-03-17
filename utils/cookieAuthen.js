@@ -12,6 +12,7 @@ const FirebaseToken = cookiesConfig.AUTHEN.FirebaseToken;
 const LoginType = cookiesConfig.AUTHEN.LoginType;
 const LoginCsrfState = cookiesConfig.AUTHEN.LoginCsrfState;
 const SessionCart = cookiesConfig.AUTHEN.SessionCart;
+const OrderCart = cookiesConfig.AUTHEN.OrderCart;
 
 export function getAccessToken() {
   return Cookies.get(AccessToken);
@@ -106,5 +107,23 @@ export function setLstLocation(data) {
 export function removeLstLocation() {
   if (process.browser) {
     localStorage.removeItem(LocationList);
+  }
+}
+
+export function getOrderCart() {
+  if (process.browser) {
+    return localStorage.getItem(OrderCart);
+  }
+}
+
+export function setOrderCard(data) {
+  if (process.browser) {
+    localStorage.setItem(OrderCart, JSON.stringify(data));
+  }
+}
+
+export function removeOrderCart() {
+  if (process.browser) {
+    localStorage.removeItem(OrderCart);
   }
 }

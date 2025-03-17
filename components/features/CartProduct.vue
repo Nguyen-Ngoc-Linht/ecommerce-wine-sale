@@ -16,13 +16,13 @@
             {{ infoCard.product?.category?.name}}
         </span>
         <div class="d-flex align-items-center mt-2 gap-1">
-          <div class="bg-light icon-action cursor-pointer" @click="reductionProduct">
+          <div class="bg-light icon-action" :class="{'cursor-pointer': !disableProduct}" @click="reductionProduct">
             <i class="el-icon-minus"></i>
           </div>
           <div class="bg-light icon-action">
             <span class="text-sm">{{ infoCard.quantity }}</span>
           </div>
-          <div class="bg-light icon-action cursor-pointer" @click="increaseProduct">
+          <div class="bg-light icon-action" :class="{'cursor-pointer': !disableProduct}" @click="increaseProduct">
             <i class="el-icon-plus"></i>
           </div>
         </div>
@@ -42,6 +42,10 @@ export default {
       type: Object,
       default: () => {}
     },
+    disableProduct: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -53,10 +57,11 @@ export default {
       return formatPrice(value)
     },
     increaseProduct() {
-      console.log('hay')
+      if (this.disableProduct) return
       this.$emit('increaseProduct')
     },
     reductionProduct() {
+      if (this.disableProduct) return
       this.$emit('reductionProduct')
     }
   },

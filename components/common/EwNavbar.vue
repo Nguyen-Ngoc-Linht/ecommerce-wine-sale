@@ -90,7 +90,8 @@
 
 
 
-            <nuxt-link to="/auth/login" class="ms-3 text-white">Đăng nhập</nuxt-link>
+            <nuxt-link v-if="!user.id" to="/auth/login" class="ms-3 text-white">Đăng nhập</nuxt-link>
+            <span v-else class="ms-3 text-white">{{ user.name }}</span>
           </div>
         </div>
       </div>
@@ -99,9 +100,12 @@
 </template>
 
 <script>
+import {getUserInfo} from "@/utils/cookieAuthen";
+
 export default {
   data() {
     return {
+      user: {},
       notifications: [
         { message: 'Your order has been shipped!' },
         { message: 'New items are available in the store!' },
@@ -144,6 +148,9 @@ export default {
   mounted() {
     // Listen for outside clicks
     document.addEventListener('click', this.closePopup);
+  },
+  created() {
+    this.user = JSON.parse(getUserInfo()) || {};
   },
   destroyed() {
     // Remove event listener when the component is destroyed

@@ -26,6 +26,7 @@
 
 <script>
 import {mapActions, mapGetters, mapState} from "vuex";
+import {getSessionCart} from "@/utils/cookieAuthen";
 
 export default {
   layout: 'empty',
@@ -43,6 +44,9 @@ export default {
       apiSignIn: 'apiSignIn',
       apiSignInWithGoogle: 'apiSignInWithGoogle',
     }),
+    ...mapActions('cart', {
+      apiHandleCart: 'apiHandleCart'
+    }),
     async handleLogin() {
       try {
         const params = {
@@ -51,7 +55,17 @@ export default {
         }
         await this.apiSignIn(params).then(res => {
           console.log(res)
-          this.$router.push('/cms')
+          const sessionKey = getSessionCart()
+          const payload = {
+            userId: res.userId,
+            cartSessionId: sessionKey,
+          }
+          this.apiHandleCart(payload).then((res) => {
+            if (res) {
+              console.log('aaa')
+            }
+          })
+          this.$router.push('/')
         })
       } catch (e) {}
     },
