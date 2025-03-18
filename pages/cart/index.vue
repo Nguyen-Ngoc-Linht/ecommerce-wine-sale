@@ -458,7 +458,8 @@ export default {
               userId: res.userId,
             }
             setOrderCard(order)
-            this.getQrCode(payload)
+            // this.getQrCode(payload)
+            this.$router.push(`/cart/pay/${order.id}`)
             this.$message.success('Bạn đã đặt hàng thành công')
           }
         })

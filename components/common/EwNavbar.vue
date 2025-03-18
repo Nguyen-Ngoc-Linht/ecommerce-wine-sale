@@ -43,7 +43,7 @@
             class="text-white-50 font-weight-bold text-lg"
             exact-active-class="active-link"
           >
-            Câu chuyện
+            Về chúng tôi
           </nuxt-link>
           <nuxt-link
             to="/landing-page"
